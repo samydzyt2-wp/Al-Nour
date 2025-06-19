@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>مدرسة النور القرآنية</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -517,38 +518,308 @@
       color: #007f8c;
     }
 
-    /* استجابة للشاشات الصغيرة */
+    /* التصميم المتجاوب (Responsive Design) */
+    
+    /* للأجهزة اللوحية (Tablets) */
     @media (max-width: 1024px) {
-      .main-content {
-        flex-direction: column;
-        gap: 50px;
+      .navbar {
+        padding: 15px 30px;
       }
       
-      .student-slider, .login-box {
-        width: 90vw;
+      .nav-links {
+        gap: 25px;
+      }
+      
+      .nav-links span {
+        font-size: 0.9em;
+        padding: 6px 12px;
+      }
+      
+      .main-content {
+        gap: 50px;
+        padding: 30px 30px;
+        flex-direction: column;
+      }
+      
+      .student-slider {
+        width: 100%;
+        max-width: 500px;
+        height: 350px;
+      }
+      
+      .login-box {
+        width: 100%;
         max-width: 400px;
+        padding: 30px 25px;
+      }
+      
+      .logo-text h2 {
+        font-size: 1.2em;
+      }
+      
+      .logo-text small {
+        font-size: 0.7em;
       }
     }
 
+    /* للهواتف الذكية (Mobile) */
     @media (max-width: 768px) {
       .navbar {
-        padding: 15px 25px;
+        padding: 12px 20px;
         flex-direction: column;
         gap: 15px;
       }
       
       .nav-links {
-        gap: 20px;
-        font-size: 0.9em;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .nav-links span {
+        font-size: 0.8em;
+        padding: 5px 10px;
       }
       
       .main-content {
-        padding: 20px;
+        gap: 30px;
+        padding: 20px 15px;
+        min-height: calc(100vh - 120px);
       }
       
       .student-slider {
-        width: 90vw;
-        height: 350px;
+        width: 100%;
+        height: 250px;
+        border-radius: 16px;
+      }
+      
+      .slide-overlay {
+        padding: 20px 20px 15px;
+      }
+      
+      .slide-title {
+        font-size: 1em;
+      }
+      
+      .slide-description {
+        font-size: 0.85em;
+      }
+      
+      .login-box {
+        width: 100%;
+        padding: 25px 20px;
+      }
+      
+      .login-header h3 {
+        font-size: 1.3em;
+      }
+      
+      .login-header p {
+        font-size: 0.9em;
+      }
+      
+      .form-group {
+        margin-bottom: 15px;
+      }
+      
+      .form-group label {
+        font-size: 0.9em;
+      }
+      
+      .form-group input {
+        padding: 10px 12px;
+        font-size: 0.9em;
+      }
+      
+      .login-button {
+        padding: 12px 20px;
+        font-size: 0.9em;
+      }
+      
+      .logo-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+      }
+      
+      .logo-text h2 {
+        font-size: 1.1em;
+      }
+      
+      .logo-text small {
+        font-size: 0.65em;
+      }
+      
+      /* تعديل شريط التحميل للهواتف */
+      .loading-bar {
+        width: 250px;
+        bottom: 30px;
+      }
+      
+      .skip-button {
+        top: 20px;
+        right: 20px;
+        padding: 8px 16px;
+        font-size: 12px;
+      }
+    }
+
+    /* للهواتف الصغيرة جداً */
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 10px 15px;
+      }
+      
+      .nav-links {
+        gap: 10px;
+      }
+      
+      .nav-links span {
+        font-size: 0.75em;
+        padding: 4px 8px;
+      }
+      
+      .main-content {
+        padding: 15px 10px;
+        gap: 20px;
+      }
+      
+      .student-slider {
+        height: 200px;
+        border-radius: 12px;
+      }
+      
+      .slide-overlay {
+        padding: 15px 15px 10px;
+      }
+      
+      .slide-title {
+        font-size: 0.9em;
+        margin-bottom: 5px;
+      }
+      
+      .slide-description {
+        font-size: 0.8em;
+      }
+      
+      .login-box {
+        padding: 20px 15px;
+      }
+      
+      .login-header h3 {
+        font-size: 1.2em;
+      }
+      
+      .login-header p {
+        font-size: 0.85em;
+      }
+      
+      .form-group input {
+        padding: 8px 10px;
+        font-size: 0.85em;
+      }
+      
+      .login-button {
+        padding: 10px 16px;
+        font-size: 0.85em;
+      }
+      
+      .logo-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+      }
+      
+      .logo-text h2 {
+        font-size: 1em;
+      }
+      
+      .logo-text small {
+        font-size: 0.6em;
+      }
+      
+      /* تعديل شريط التحميل للهواتف الصغيرة */
+      .loading-bar {
+        width: 200px;
+        bottom: 20px;
+      }
+      
+      .skip-button {
+        top: 15px;
+        right: 15px;
+        padding: 6px 12px;
+        font-size: 11px;
+      }
+    }
+
+    /* للأجهزة ذات الشاشات الكبيرة جداً */
+    @media (min-width: 1400px) {
+      .main-content {
+        gap: 100px;
+        padding: 50px 80px;
+      }
+      
+      .student-slider {
+        width: 600px;
+        height: 450px;
+      }
+      
+      .login-box {
+        width: 450px;
+        padding: 40px 35px;
+      }
+      
+      .navbar {
+        padding: 25px 80px;
+      }
+      
+      .nav-links {
+        gap: 40px;
+      }
+      
+      .nav-links span {
+        font-size: 1.1em;
+        padding: 10px 20px;
+      }
+    }
+
+    /* تحسين العرض للشاشات المنخفضة */
+    @media (max-height: 600px) {
+      .main-content {
+        min-height: calc(100vh - 100px);
+        padding: 20px 30px;
+      }
+      
+      .student-slider {
+        height: 200px;
+      }
+      
+      .login-box {
+        padding: 20px 25px;
+      }
+    }
+
+    /* تحسين للشاشات المائلة (Landscape) على الهواتف */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .main-content {
+        flex-direction: row;
+        gap: 20px;
+        padding: 15px 20px;
+      }
+      
+      .student-slider {
+        width: 50%;
+        height: 200px;
+      }
+      
+      .login-box {
+        width: 40%;
+        padding: 20px 15px;
+      }
+      
+      .navbar {
+        flex-direction: row;
+        gap: 0;
       }
     }
   </style>
