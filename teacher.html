@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>واجهة المعلم - مدرسة النور القرآنية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { background: #e0f7fa; font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; margin: 0; padding: 0; }
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background: #fff; border-bottom: 1px solid #009ca622; }
+    .logo-section { display: flex; align-items: center; gap: 15px; }
+    .logo-icon { width: 45px; height: 45px; background: #009ca6; color: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+    .logo-text h2 { color: #009ca6; font-size: 1.4em; font-weight: 600; margin-bottom: 2px; }
+    .logo-text small { color: #009ca6; font-size: 0.8em; font-weight: 300; }
+    .main-content { padding: 40px 10px; max-width: 1200px; margin: 0 auto; }
+    .table-responsive { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 30px; box-shadow: 0 4px 24px #009ca622; overflow: hidden; min-width: 800px; }
+    th, td { padding: 14px 8px; text-align: center; font-size: 1em; }
+    th { background: #e0f7fa; color: #009ca6; font-weight: 700; }
+    tr:not(:last-child) td { border-bottom: 1px solid #e0f7fa; }
+    select, input[type=text] { font-family: inherit; font-size: 1em; border-radius: 8px; border: 1px solid #009ca6; padding: 6px 8px; min-width: 60px; }
+    .save-btn { background: #009ca6; color: #fff; border: none; border-radius: 8px; padding: 8px 18px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .save-btn:hover { background: #007f8c; }
+    .status-present { color: #009c4a; font-weight: bold; }
+    .status-absent { color: #e74c3c; font-weight: bold; }
+    @media (max-width: 900px) {
+      .main-content { padding: 10px 2px; }
+      table, th, td { font-size: 0.95em; }
+      .navbar { padding: 12px 10px; }
+    }
+    @media (max-width: 600px) {
+      .main-content { padding: 6px 1px; }
+      .table-responsive { min-width: 0; }
+      table { min-width: 480px; border-radius: 16px; }
+      th, td { padding: 6px 2px; font-size: 0.85em; }
+      .navbar { flex-direction: column; padding: 10px 2vw; }
+      .logo-section { gap: 7px; }
+      .logo-icon { width: 32px; height: 32px; font-size: 15px; }
+      .logo-text h2 { font-size: 1.1em; }
+      .logo-text small { font-size: 0.7em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo-section">
+      <div class="logo-icon">ن</div>
+      <div class="logo-text">
+        <h2>مدرسة النور القرآنية</h2>
+        <small>الموقع الرسمي للمدرسة النور القرآنية</small>
+      </div>
+    </div>
+    <div><b>واجهة المعلم</b></div>
+  </div>
+  <div class="main-content">
+    <h2 style="color:#009ca6; text-align:center; margin-bottom:24px;">قائمة الطلاب اليومية</h2>
+    <div class="table-responsive"><div id="studentsTableContainer"></div></div>
+  </div>
+  <script>
+    // إعدادات Firebase - استبدلها بإعدادات مشروعك
+    const firebaseConfig = {
+    apiKey: "AIzaSyDIxf27yWX291hqbHb7fIcJYOOJCWRTfs8",
+    authDomain: "al-nour-1c02e.firebaseapp.com",
+    projectId: "al-nour-1c02e",
+    storageBucket: "al-nour-1c02e.firebasestorage.app",
+    messagingSenderId: "966464739304",
+    appId: "1:966464739304:web:85013dbe5584ece1deb65d",
+    measurementId: "G-5833RVR669"
+  };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // مصفوفة سور القرآن وعدد آيات كل سورة
+    const surahs = [
+      {name: "الفاتحة", ayat: 7}, {name: "البقرة", ayat: 286}, {name: "آل عمران", ayat: 200},
+      {name: "النساء", ayat: 176}, {name: "المائدة", ayat: 120}, {name: "الأنعام", ayat: 165},
+      {name: "الأعراف", ayat: 206}, {name: "الأنفال", ayat: 75}, {name: "التوبة", ayat: 129},
+      {name: "يونس", ayat: 109}, {name: "هود", ayat: 123}, {name: "يوسف", ayat: 111},
+      {name: "الرعد", ayat: 43}, {name: "إبراهيم", ayat: 52}, {name: "الحجر", ayat: 99},
+      {name: "النحل", ayat: 128}, {name: "الإسراء", ayat: 111}, {name: "الكهف", ayat: 110},
+      {name: "مريم", ayat: 98}, {name: "طه", ayat: 135}, {name: "الأنبياء", ayat: 112},
+      {name: "الحج", ayat: 78}, {name: "المؤمنون", ayat: 118}, {name: "النور", ayat: 64},
+      {name: "الفرقان", ayat: 77}, {name: "الشعراء", ayat: 227}, {name: "النمل", ayat: 93},
+      {name: "القصص", ayat: 88}, {name: "العنكبوت", ayat: 69}, {name: "الروم", ayat: 60},
+      {name: "لقمان", ayat: 34}, {name: "السجدة", ayat: 30}, {name: "الأحزاب", ayat: 73},
+      {name: "سبأ", ayat: 54}, {name: "فاطر", ayat: 45}, {name: "يس", ayat: 83},
+      {name: "الصافات", ayat: 182}, {name: "ص", ayat: 88}, {name: "الزمر", ayat: 75},
+      {name: "غافر", ayat: 85}, {name: "فصلت", ayat: 54}, {name: "الشورى", ayat: 53},
+      {name: "الزخرف", ayat: 89}, {name: "الدخان", ayat: 59}, {name: "الجاثية", ayat: 37},
+      {name: "الأحقاف", ayat: 35}, {name: "محمد", ayat: 38}, {name: "الفتح", ayat: 29},
+      {name: "الحجرات", ayat: 18}, {name: "ق", ayat: 45}, {name: "الذاريات", ayat: 60},
+      {name: "الطور", ayat: 49}, {name: "النجم", ayat: 62}, {name: "القمر", ayat: 55},
+      {name: "الرحمن", ayat: 78}, {name: "الواقعة", ayat: 96}, {name: "الحديد", ayat: 29},
+      {name: "المجادلة", ayat: 22}, {name: "الحشر", ayat: 24}, {name: "الممتحنة", ayat: 13},
+      {name: "الصف", ayat: 14}, {name: "الجمعة", ayat: 11}, {name: "المنافقون", ayat: 11},
+      {name: "التغابن", ayat: 18}, {name: "الطلاق", ayat: 12}, {name: "التحريم", ayat: 12},
+      {name: "الملك", ayat: 30}, {name: "القلم", ayat: 52}, {name: "الحاقة", ayat: 52},
+      {name: "المعارج", ayat: 44}, {name: "نوح", ayat: 28}, {name: "الجن", ayat: 28},
+      {name: "المزمل", ayat: 20}, {name: "المدثر", ayat: 56}, {name: "القيامة", ayat: 40},
+      {name: "الإنسان", ayat: 31}, {name: "المرسلات", ayat: 50}, {name: "النبأ", ayat: 40},
+      {name: "النازعات", ayat: 46}, {name: "عبس", ayat: 42}, {name: "التكوير", ayat: 29},
+      {name: "الانفطار", ayat: 19}, {name: "المطففين", ayat: 36}, {name: "الانشقاق", ayat: 25},
+      {name: "البروج", ayat: 22}, {name: "الطارق", ayat: 17}, {name: "الأعلى", ayat: 19},
+      {name: "الغاشية", ayat: 26}, {name: "الفجر", ayat: 30}, {name: "البلد", ayat: 20},
+      {name: "الشمس", ayat: 15}, {name: "الليل", ayat: 21}, {name: "الضحى", ayat: 11},
+      {name: "الشرح", ayat: 8}, {name: "التين", ayat: 8}, {name: "العلق", ayat: 19},
+      {name: "القدر", ayat: 5}, {name: "البينة", ayat: 8}, {name: "الزلزلة", ayat: 8},
+      {name: "العاديات", ayat: 11}, {name: "القارعة", ayat: 11}, {name: "التكاثر", ayat: 8},
+      {name: "العصر", ayat: 3}, {name: "الهمزة", ayat: 9}, {name: "الفيل", ayat: 5},
+      {name: "قريش", ayat: 4}, {name: "الماعون", ayat: 7}, {name: "الكوثر", ayat: 3},
+      {name: "الكافرون", ayat: 6}, {name: "النصر", ayat: 3}, {name: "المسد", ayat: 5},
+      {name: "الإخلاص", ayat: 4}, {name: "الفلق", ayat: 5}, {name: "الناس", ayat: 6}
+    ];
+
+    // جلب الطلاب وعرضهم
+    async function loadStudents() {
+      const studentsSnap = await db.collection('students').get();
+      const students = studentsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderTable(students);
+    }
+
+    // بناء الجدول
+    function renderTable(students) {
+      let html = `<table><thead><tr>
+        <th>رقم التلميذ</th>
+        <th>اسم الابن</th>
+        <th>اسم ولي الأمر</th>
+        <th>الحالة</th>
+        <th>من السورة</th>
+        <th>من الآية</th>
+        <th>إلى السورة</th>
+        <th>إلى الآية</th>
+        <th>التقييم</th>
+        <th>ملاحظة</th>
+        <th>حفظ</th>
+      </tr></thead><tbody>`;
+      students.forEach((student, idx) => {
+        html += `<tr data-idx="${idx}" data-id="${student.id}">
+          <td>${student.id}</td>
+          <td>${student.studentName || ''}</td>
+          <td>${student.parentName || ''}</td>
+          <td>
+            <select class="status-select">
+              <option value="حاضر">حاضر</option>
+              <option value="غائب">غائب</option>
+            </select>
+          </td>
+          <td>
+            <select class="from-surah">${surahs.map((s,i)=>`<option value="${s.name}">${s.name}</option>`).join('')}</select>
+          </td>
+          <td>
+            <select class="from-ayah"></select>
+          </td>
+          <td>
+            <select class="to-surah">${surahs.map((s,i)=>`<option value="${s.name}">${s.name}</option>`).join('')}</select>
+          </td>
+          <td>
+            <select class="to-ayah"></select>
+          </td>
+          <td>
+            <select class="eval-select">
+              <option value="ضعيف">ضعيف</option>
+              <option value="حسن">حسن</option>
+              <option value="جيد">جيد</option>
+              <option value="جيد جدا">جيد جدا</option>
+            </select>
+          </td>
+          <td><input type="text" class="note-input" placeholder="ملاحظة"></td>
+          <td><button class="save-btn">حفظ</button></td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      document.getElementById('studentsTableContainer').innerHTML = html;
+      // تهيئة قوائم الآيات
+      document.querySelectorAll('tr[data-idx]').forEach(tr => {
+        const fromSurahSel = tr.querySelector('.from-surah');
+        const fromAyahSel = tr.querySelector('.from-ayah');
+        const toSurahSel = tr.querySelector('.to-surah');
+        const toAyahSel = tr.querySelector('.to-ayah');
+        // دوال تحديث الآيات حسب السورة
+        function updateAyat(selSurah, ayahSel) {
+          const surahIdx = surahs.findIndex(s => s.name === selSurah.value);
+          const ayatCount = surahIdx >= 0 ? surahs[surahIdx].ayat : 1;
+          ayahSel.innerHTML = Array.from({length: ayatCount}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+        }
+        fromSurahSel.addEventListener('change', ()=>updateAyat(fromSurahSel, fromAyahSel));
+        toSurahSel.addEventListener('change', ()=>updateAyat(toSurahSel, toAyahSel));
+        // تهيئة افتراضية
+        updateAyat(fromSurahSel, fromAyahSel);
+        updateAyat(toSurahSel, toAyahSel);
+      });
+      // زر الحفظ
+      document.querySelectorAll('.save-btn').forEach((btn, idx) => {
+        btn.addEventListener('click', async function() {
+          const tr = btn.closest('tr');
+          const studentId = tr.getAttribute('data-id');
+          const status = tr.querySelector('.status-select').value;
+          const fromSurah = tr.querySelector('.from-surah').value;
+          const fromAyah = parseInt(tr.querySelector('.from-ayah').value);
+          const toSurah = tr.querySelector('.to-surah').value;
+          const toAyah = parseInt(tr.querySelector('.to-ayah').value);
+          const evaluation = tr.querySelector('.eval-select').value;
+          const note = tr.querySelector('.note-input').value;
+          const date = new Date().toISOString().slice(0,10);
+          await db.collection('attendance').add({
+            studentId, date, status, fromSurah, fromAyah, toSurah, toAyah, evaluation, note
+          });
+          btn.textContent = 'تم الحفظ';
+          btn.style.background = '#009c4a';
+          setTimeout(()=>{ btn.textContent = 'حفظ'; btn.style.background = '#009ca6'; }, 2000);
+        });
+      });
+    }
+    loadStudents();
+  </script>
+</body>
+</html> 

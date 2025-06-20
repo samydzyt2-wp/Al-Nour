@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة تحكم الأدمن - مدرسة النور القرآنية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; background: #e0f7fa; margin: 0; padding: 0; }
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background: #fff; border-bottom: 1px solid #009ca622; }
+    .logo-section { display: flex; align-items: center; gap: 15px; }
+    .logo-icon { width: 45px; height: 45px; background: #009ca6; color: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+    .logo-text h2 { color: #009ca6; font-size: 1.4em; font-weight: 600; margin-bottom: 2px; }
+    .logo-text small { color: #009ca6; font-size: 0.8em; font-weight: 300; }
+    .main-content { padding: 40px 10px; max-width: 900px; margin: 0 auto; }
+    .admin-box { background: #fff; border-radius: 16px; max-width: 400px; margin: 40px auto; padding: 30px; box-shadow: 0 8px 32px #009ca633; }
+    h2 { color: #009ca6; text-align: center; }
+    label { display: block; margin: 15px 0 5px; color: #009ca6; }
+    input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #009ca6; margin-bottom: 10px; }
+    button, .edit-btn, .save-btn, .cancel-btn { background: #009ca6; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; margin: 5px 0; transition: background 0.2s; }
+    button:hover, .edit-btn:hover, .save-btn:hover, .cancel-btn:hover { background: #007f8c; }
+    .result { margin-top: 20px; text-align: center; }
+    .success { color: #009ca6; }
+    .error { color: #e74c3c; }
+    .students-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 20px; box-shadow: 0 4px 24px #009ca622; margin-top: 30px; overflow: hidden; }
+    th, td { padding: 10px 6px; text-align: center; font-size: 1em; }
+    th { background: #e0f7fa; color: #009ca6; font-weight: 700; }
+    tr:not(:last-child) td { border-bottom: 1px solid #e0f7fa; }
+    .edit-row input { width: 90%; }
+    @media (max-width: 700px) {
+      .main-content { padding: 10px 2px; }
+      .navbar { flex-direction: column; padding: 12px 10px; }
+      .logo-section { gap: 7px; }
+      .logo-icon { width: 32px; height: 32px; font-size: 15px; }
+      .logo-text h2 { font-size: 1.1em; }
+      .logo-text small { font-size: 0.7em; }
+      th, td { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo-section">
+      <div class="logo-icon">ن</div>
+      <div class="logo-text">
+        <h2>مدرسة النور القرآنية</h2>
+        <small>الموقع الرسمي للمدرسة النور القرآنية</small>
+      </div>
+    </div>
+    <div><b>لوحة تحكم الأدمن</b></div>
+  </div>
+  <div class="main-content">
+    <div class="admin-box" id="loginBox">
+      <h2>تسجيل دخول الأدمن</h2>
+      <form id="adminLoginForm">
+        <label for="adminPhone">رقم الهاتف</label>
+        <input type="text" id="adminPhone" required>
+        <label for="adminPassword">كلمة السر</label>
+        <input type="password" id="adminPassword" required>
+        <button type="submit">دخول</button>
+      </form>
+      <div class="result" id="loginResult"></div>
+    </div>
+    <div id="adminPanel" style="display:none;">
+      <div id="addStudentBox" class="admin-box" style="max-width:600px; margin-bottom:30px;">
+        <h2>إضافة طالب جديد</h2>
+        <form id="addStudentForm" autocomplete="off">
+          <label for="studentId">رقم التلميذ</label>
+          <input type="text" id="studentId" required>
+          <label for="studentName">اسم الابن</label>
+          <input type="text" id="studentName" required>
+          <label for="parentName">اسم ولي الأمر</label>
+          <input type="text" id="parentName" required>
+          <label for="phone">رقم الهاتف</label>
+          <input type="text" id="phone" required>
+          <label for="password">كلمة السر</label>
+          <input type="text" id="password" required>
+          <label for="surahsCount">عدد السور المحفوظة</label>
+          <input type="number" id="surahsCount" min="0" value="0">
+          <label for="attendanceDays">أيام الحضور</label>
+          <input type="number" id="attendanceDays" min="0" value="0">
+          <label for="evaluation">التقييم</label>
+          <select id="evaluation">
+            <option value="ضعيف">ضعيف</option>
+            <option value="حسن">حسن</option>
+            <option value="جيد">جيد</option>
+            <option value="جيد جدا">جيد جدا</option>
+          </select>
+          <button type="submit">إضافة الطالب</button>
+        </form>
+        <div class="result" id="addStudentResult"></div>
+      </div>
+      <button id="editStudentBtn">تعديل الطالب</button>
+      <div id="studentsEditSection" style="margin-top:30px;"></div>
+    </div>
+  </div>
+  <script>
+    // إعدادات Firebase - استبدلها بإعدادات مشروعك
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIxf27yWX291hqbHb7fIcJYOOJCWRTfs8",
+      authDomain: "al-nour-1c02e.firebaseapp.com",
+      projectId: "al-nour-1c02e",
+      storageBucket: "al-nour-1c02e.firebasestorage.app",
+      messagingSenderId: "966464739304",
+      appId: "1:966464739304:web:85013dbe5584ece1deb65d",
+      measurementId: "G-5833RVR669"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // بيانات الأدمن (يمكنك تعديلها)
+    const ADMIN_PHONE = "0791";
+    const ADMIN_PASS = "0000";
+
+    // تسجيل دخول الأدمن
+    document.getElementById('adminLoginForm').onsubmit = function(e) {
+      e.preventDefault();
+      const phone = document.getElementById('adminPhone').value.trim();
+      const pass = document.getElementById('adminPassword').value.trim();
+      if(phone === ADMIN_PHONE && pass === ADMIN_PASS) {
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+      } else {
+        document.getElementById('loginResult').textContent = 'بيانات الأدمن غير صحيحة';
+        document.getElementById('loginResult').className = 'result error';
+      }
+    };
+
+    // عند الضغط على زر تعديل الطالب
+    document.getElementById('editStudentBtn').onclick = async function() {
+      const section = document.getElementById('studentsEditSection');
+      section.innerHTML = 'جاري تحميل الطلاب...';
+      const snap = await db.collection('students').get();
+      const students = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      let html = `<table class="students-table"><thead><tr>
+        <th>رقم التلميذ</th>
+        <th>اسم الابن</th>
+        <th>اسم ولي الأمر</th>
+        <th>عدد السور</th>
+        <th>أيام الحضور</th>
+        <th>التقييم</th>
+        <th>تعديل</th>
+      </tr></thead><tbody>`;
+      students.forEach((student, idx) => {
+        html += `<tr data-id="${student.id}">
+          <td>${student.id}</td>
+          <td class="studentName">${student.studentName || ''}</td>
+          <td class="parentName">${student.parentName || ''}</td>
+          <td class="surahsCount">${student.surahsCount || ''}</td>
+          <td class="attendanceDays">${student.attendanceDays || ''}</td>
+          <td class="evaluation">${student.evaluation || ''}</td>
+          <td><button class="edit-btn">تعديل</button></td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      section.innerHTML = html;
+
+      // عند الضغط على زر تعديل
+      section.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.onclick = function() {
+          const tr = btn.closest('tr');
+          if (tr.classList.contains('edit-row')) return;
+          tr.classList.add('edit-row');
+          const id = tr.getAttribute('data-id');
+          const studentName = tr.querySelector('.studentName').textContent;
+          const parentName = tr.querySelector('.parentName').textContent;
+          const surahsCount = tr.querySelector('.surahsCount').textContent;
+          const attendanceDays = tr.querySelector('.attendanceDays').textContent;
+          const evaluation = tr.querySelector('.evaluation').textContent;
+          tr.innerHTML = `
+            <td>${id}</td>
+            <td><input type="text" value="${studentName}"></td>
+            <td><input type="text" value="${parentName}"></td>
+            <td><input type="number" value="${surahsCount}"></td>
+            <td><input type="number" value="${attendanceDays}"></td>
+            <td>
+              <select>
+                <option value="ضعيف" ${evaluation === 'ضعيف' ? 'selected' : ''}>ضعيف</option>
+                <option value="حسن" ${evaluation === 'حسن' ? 'selected' : ''}>حسن</option>
+                <option value="جيد" ${evaluation === 'جيد' ? 'selected' : ''}>جيد</option>
+                <option value="جيد جدا" ${evaluation === 'جيد جدا' ? 'selected' : ''}>جيد جدا</option>
+              </select>
+            </td>
+            <td>
+              <button class="save-btn">حفظ</button>
+              <button class="cancel-btn">إلغاء</button>
+            </td>
+          `;
+          // زر الحفظ
+          tr.querySelector('.save-btn').onclick = async function() {
+            const newStudentName = tr.querySelector('td:nth-child(2) input').value.trim();
+            const newParentName = tr.querySelector('td:nth-child(3) input').value.trim();
+            const newSurahsCount = parseInt(tr.querySelector('td:nth-child(4) input').value.trim(), 10);
+            const newAttendanceDays = parseInt(tr.querySelector('td:nth-child(5) input').value.trim(), 10);
+            const newEvaluation = tr.querySelector('td:nth-child(6) select').value;
+            await db.collection('students').doc(id).update({
+              studentName: newStudentName,
+              parentName: newParentName,
+              surahsCount: newSurahsCount,
+              attendanceDays: newAttendanceDays,
+              evaluation: newEvaluation
+            });
+            // إعادة تحميل القائمة بعد الحفظ
+            document.getElementById('editStudentBtn').click();
+          };
+          // زر الإلغاء
+          tr.querySelector('.cancel-btn').onclick = function() {
+            document.getElementById('editStudentBtn').click();
+          };
+        };
+      });
+    };
+
+    // إضافة طالب جديد
+    document.getElementById('addStudentForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('studentId').value.trim();
+      const studentName = document.getElementById('studentName').value.trim();
+      const parentName = document.getElementById('parentName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const surahsCount = parseInt(document.getElementById('surahsCount').value.trim(), 10) || 0;
+      const attendanceDays = parseInt(document.getElementById('attendanceDays').value.trim(), 10) || 0;
+      const evaluation = document.getElementById('evaluation').value;
+      const resultDiv = document.getElementById('addStudentResult');
+      if (!id || !studentName || !parentName || !phone || !password) {
+        resultDiv.textContent = 'يرجى تعبئة جميع الحقول المطلوبة';
+        resultDiv.className = 'result error';
+        return;
+      }
+      try {
+        // تحقق إذا كان الطالب موجود مسبقاً
+        const doc = await db.collection('students').doc(id).get();
+        if (doc.exists) {
+          resultDiv.textContent = 'رقم التلميذ مستخدم بالفعل';
+          resultDiv.className = 'result error';
+          return;
+        }
+        await db.collection('students').doc(id).set({
+          studentName, parentName, phone, password, surahsCount, attendanceDays, evaluation
+        });
+        resultDiv.textContent = 'تمت إضافة الطالب بنجاح';
+        resultDiv.className = 'result success';
+        document.getElementById('addStudentForm').reset();
+      } catch (err) {
+        resultDiv.textContent = 'حدث خطأ أثناء الإضافة';
+        resultDiv.className = 'result error';
+      }
+    };
+  </script>
+</body>
+</html>
