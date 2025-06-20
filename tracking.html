@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>التتبع اليومي - مدرسة النور القرآنية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { background: #e0f7fa; font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; margin: 0; padding: 0; }
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background: #fff; border-bottom: 1px solid #009ca622; }
+    .logo-section { display: flex; align-items: center; gap: 15px; }
+    .logo-icon { width: 45px; height: 45px; background: #009ca6; color: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+    .logo-text h2 { color: #009ca6; font-size: 1.4em; font-weight: 600; margin-bottom: 2px; }
+    .logo-text small { color: #009ca6; font-size: 0.8em; font-weight: 300; }
+    .main-content { padding: 40px 10px; max-width: 1200px; margin: 0 auto; }
+    .table-responsive { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 30px; box-shadow: 0 4px 24px #009ca622; overflow: hidden; min-width: 600px; }
+    th, td { padding: 14px 8px; text-align: center; font-size: 1em; }
+    th { background: #e0f7fa; color: #009ca6; font-weight: 700; }
+    tr:not(:last-child) td { border-bottom: 1px solid #e0f7fa; }
+    .status-present { color: #009c4a; font-weight: bold; }
+    .status-absent { color: #e74c3c; font-weight: bold; }
+    @media (max-width: 900px) {
+      .main-content { padding: 10px 2px; }
+      table, th, td { font-size: 0.95em; }
+      .navbar { padding: 12px 10px; }
+    }
+    @media (max-width: 600px) {
+      .main-content { padding: 6px 1px; }
+      .table-responsive { min-width: 0; }
+      table { min-width: 480px; border-radius: 16px; }
+      th, td { padding: 6px 2px; font-size: 0.85em; }
+      .navbar { flex-direction: column; padding: 10px 2vw; }
+      .logo-section { gap: 7px; }
+      .logo-icon { width: 32px; height: 32px; font-size: 15px; }
+      .logo-text h2 { font-size: 1.1em; }
+      .logo-text small { font-size: 0.7em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo-section">
+      <div class="logo-icon">ن</div>
+      <div class="logo-text">
+        <h2>مدرسة النور القرآنية</h2>
+        <small>الموقع الرسمي للمدرسة النور القرآنية</small>
+      </div>
+    </div>
+    <div><b>التتبع اليومي</b></div>
+  </div>
+  <div class="main-content">
+    <h2 style="color:#009ca6; text-align:center; margin-bottom:24px;">سجل أداء ابنك اليومي</h2>
+    <div class="table-responsive"><div id="trackingTableContainer"></div></div>
+  </div>
+  <script>
+    // إعدادات Firebase - استبدلها بإعدادات مشروعك
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIxf27yWX291hqbHb7fIcJYOOJCWRTfs8",
+      authDomain: "al-nour-1c02e.firebaseapp.com",
+      projectId: "al-nour-1c02e",
+      storageBucket: "al-nour-1c02e.firebasestorage.app",
+      messagingSenderId: "966464739304",
+      appId: "1:966464739304:web:85013dbe5584ece1deb65d",
+      measurementId: "G-5833RVR669"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // جلب السجلات من attendance
+    async function loadTracking() {
+      const params = new URLSearchParams(window.location.search);
+      const studentId = params.get('studentId');
+      if (!studentId) return;
+      const snap = await db.collection('attendance').where('studentId', '==', studentId).orderBy('date', 'desc').get();
+      const records = snap.docs.map(doc => doc.data());
+      renderTable(records);
+    }
+
+    // بناء الجدول
+    function renderTable(records) {
+      let html = `<table><thead><tr>
+        <th>تاريخ</th>
+        <th>الحالة</th>
+        <th>التحديد القرآني</th>
+        <th>التقييم</th>
+        <th>ملاحظة</th>
+      </tr></thead><tbody>`;
+      if (records.length === 0) {
+        html += `<tr><td colspan="5">لا توجد بيانات بعد.</td></tr>`;
+      } else {
+        records.forEach(rec => {
+          const statusClass = rec.status === 'حاضر' ? 'status-present' : 'status-absent';
+          let quranRange = '-';
+          if (rec.fromSurah && rec.fromAyah && rec.toSurah && rec.toAyah) {
+            quranRange = `من ${rec.fromSurah} الآية ${rec.fromAyah} إلى ${rec.toSurah} الآية ${rec.toAyah}`;
+          }
+          html += `<tr>
+            <td>${rec.date || '-'}</td>
+            <td class="${statusClass}">${rec.status || '-'}</td>
+            <td>${quranRange}</td>
+            <td>${rec.evaluation || '-'}</td>
+            <td>${rec.note || '-'}</td>
+          </tr>`;
+        });
+      }
+      html += '</tbody></table>';
+      document.getElementById('trackingTableContainer').innerHTML = html;
+    }
+
+    loadTracking();
+  </script>
+</body>
+</html>

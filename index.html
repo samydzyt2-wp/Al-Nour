@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>مدرسة النور القرآنية</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <style>
     * {
       margin: 0;
@@ -1006,25 +1008,26 @@
     slider.addEventListener('mouseleave', startSlideShow);
 
     // نموذج تسجيل الدخول
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      
       const id = document.getElementById('studentId').value.trim();
       const pass = document.getElementById('password').value.trim();
-      
       if(id === '' || pass === '') {
         showMessage('يرجى إدخال جميع الحقول', 'error');
         return;
       }
-      
-      // تحقق تجريبي
-      if(id === '12345' && pass === 'quran2025') {
-        showMessage('تم تسجيل الدخول بنجاح! جاري التحويل...', 'success');
-        setTimeout(() => {
-          // هنا يمكن إعادة التوجيه
-        }, 1500);
-      } else {
-        showMessage('رقم التلميذ أو كلمة السر غير صحيحة', 'error');
+      try {
+        const doc = await db.collection('students').doc(id).get();
+        if (doc.exists && doc.data().password === pass) {
+          showMessage('تم تسجيل الدخول بنجاح! جاري التحويل...', 'success');
+          setTimeout(() => {
+            window.location.href = `dada.html?studentId=${id}`;
+          }, 1500);
+        } else {
+          showMessage('رقم التلميذ أو كلمة السر غير صحيحة', 'error');
+        }
+      } catch (error) {
+        showMessage('حدث خطأ أثناء التحقق', 'error');
       }
     });
 
@@ -1077,6 +1080,20 @@
       }
     `;
     document.head.appendChild(style);
+
+    // إعدادات Firebase - نفس التي وضعتها في admin.html
+    const firebaseConfig = {
+    apiKey: "AIzaSyDIxf27yWX291hqbHb7fIcJYOOJCWRTfs8",
+    authDomain: "al-nour-1c02e.firebaseapp.com",
+    projectId: "al-nour-1c02e",
+    storageBucket: "al-nour-1c02e.firebasestorage.app",
+    messagingSenderId: "966464739304",
+    appId: "1:966464739304:web:85013dbe5584ece1deb65d",
+    measurementId: "G-5833RVR669"
+    
+  };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
   </script>
 </body>
 </html>
