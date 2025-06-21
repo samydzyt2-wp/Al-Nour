@@ -5,6 +5,7 @@
   <title>واجهة المعلم - مدرسة النور القرآنية</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="مدرسة-النــــور-_1_.ico" type="image/x-icon">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <style>
@@ -25,10 +26,142 @@
     .save-btn:hover { background: #007f8c; }
     .status-present { color: #009c4a; font-weight: bold; }
     .status-absent { color: #e74c3c; font-weight: bold; }
+    
+    /* تصميم محرك البحث */
+    .search-container {
+      background: #fff;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 20px #009ca622;
+      border: 1px solid #009ca615;
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #e0f7fa;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: #009ca6;
+      background: #fff;
+      box-shadow: 0 0 0 3px #009ca615;
+    }
+    
+    .search-btn {
+      background: #009ca6;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 50px;
+    }
+    
+    .search-btn:hover {
+      background: #007f8c;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px #009ca640;
+    }
+    
+    .search-filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    .filter-select {
+      padding: 8px 12px;
+      border: 2px solid #e0f7fa;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      background: #f8f9fa;
+      color: #009ca6;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 120px;
+    }
+    
+    .filter-select:focus {
+      outline: none;
+      border-color: #009ca6;
+      background: #fff;
+    }
+    
+    .clear-btn {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .clear-btn:hover {
+      background: #c0392b;
+      transform: translateY(-1px);
+    }
+    
+    /* تحسينات للجدول مع البحث */
+    .student-row {
+      transition: all 0.3s ease;
+    }
+    
+    .student-row.hidden {
+      display: none;
+    }
+    
+    .student-row.highlight {
+      background: #e0f7fa !important;
+      box-shadow: 0 2px 8px #009ca630;
+    }
+    
     @media (max-width: 900px) {
       .main-content { padding: 10px 2px; }
       table, th, td { font-size: 0.95em; }
       .navbar { padding: 12px 10px; }
+      
+      .search-container {
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      
+      .search-box {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .search-filters {
+        justify-content: center;
+        gap: 8px;
+      }
+      
+      .filter-select {
+        min-width: 100px;
+        font-size: 0.85rem;
+      }
     }
     @media (max-width: 600px) {
       .main-content { padding: 6px 1px; }
@@ -40,6 +173,39 @@
       .logo-icon { width: 32px; height: 32px; font-size: 15px; }
       .logo-text h2 { font-size: 1.1em; }
       .logo-text small { font-size: 0.7em; }
+      
+      .search-container {
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 12px;
+      }
+      
+      .search-input {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+      
+      .search-btn {
+        padding: 10px 12px;
+      }
+      
+      .search-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+      }
+      
+      .filter-select {
+        width: 100%;
+        min-width: unset;
+        font-size: 0.8rem;
+      }
+      
+      .clear-btn {
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 10px;
+      }
     }
   </style>
 </head>
@@ -56,6 +222,34 @@
   </div>
   <div class="main-content">
     <h2 style="color:#009ca6; text-align:center; margin-bottom:24px;">قائمة الطلاب اليومية</h2>
+    
+    <!-- محرك البحث -->
+    <div class="search-container">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="ابحث عن اسم الطالب أو ولي الأمر..." class="search-input">
+        <button id="searchBtn" class="search-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="search-filters">
+        <select id="statusFilter" class="filter-select">
+          <option value="">جميع الحالات</option>
+          <option value="حاضر">حاضر</option>
+          <option value="غائب">غائب</option>
+        </select>
+        <select id="evaluationFilter" class="filter-select">
+          <option value="">جميع التقييمات</option>
+          <option value="ضعيف">ضعيف</option>
+          <option value="حسن">حسن</option>
+          <option value="جيد">جيد</option>
+          <option value="جيد جدا">جيد جدا</option>
+        </select>
+        <button id="clearFilters" class="clear-btn">مسح الفلاتر</button>
+      </div>
+    </div>
+    
     <div class="table-responsive"><div id="studentsTableContainer"></div></div>
   </div>
   <script>
@@ -118,7 +312,9 @@
     async function loadStudents() {
       const studentsSnap = await db.collection('students').get();
       const students = studentsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      window.allStudents = students; // حفظ جميع الطلاب للبحث
       renderTable(students);
+      setupSearchAndFilters();
     }
 
     // بناء الجدول
@@ -137,7 +333,7 @@
         <th>حفظ</th>
       </tr></thead><tbody>`;
       students.forEach((student, idx) => {
-        html += `<tr data-idx="${idx}" data-id="${student.id}">
+        html += `<tr data-idx="${idx}" data-id="${student.id}" class="student-row">
           <td>${student.id}</td>
           <td>${student.studentName || ''}</td>
           <td>${student.parentName || ''}</td>
@@ -179,6 +375,75 @@
         const fromAyahSel = tr.querySelector('.from-ayah');
         const toSurahSel = tr.querySelector('.to-surah');
         const toAyahSel = tr.querySelector('.to-ayah');
+        const statusSelect = tr.querySelector('.status-select');
+        const evalSelect = tr.querySelector('.eval-select');
+        const noteInput = tr.querySelector('.note-input');
+        
+        // دالة لإخفاء/إظهار الحقول حسب الحالة
+        function toggleFieldsByStatus() {
+          const isAbsent = statusSelect.value === 'غائب';
+          
+          // الحقول التي يجب إخفاؤها عند الغياب
+          const fieldsToHide = [fromSurahSel, fromAyahSel, toSurahSel, toAyahSel, evalSelect, noteInput];
+          
+          // إزالة الرسالة السابقة إن وجدت
+          const existingMsg = tr.querySelector('.absent-message');
+          if (existingMsg) {
+            existingMsg.remove();
+          }
+          
+          fieldsToHide.forEach(field => {
+            if (field) {
+              const td = field.closest('td');
+              if (isAbsent) {
+                td.style.display = 'none';
+                field.disabled = true;
+                // إضافة تأثير بصري
+                td.style.opacity = '0';
+                td.style.transition = 'opacity 0.3s ease';
+              } else {
+                td.style.display = '';
+                field.disabled = false;
+                // إعادة الإظهار مع تأثير
+                td.style.opacity = '1';
+                td.style.transition = 'opacity 0.3s ease';
+              }
+            }
+          });
+          
+          // تغيير لون الصف عند الغياب
+          if (isAbsent) {
+            tr.style.backgroundColor = '#fff5f5';
+            tr.style.borderLeft = '4px solid #e74c3c';
+            
+            // إضافة رسالة توضيحية
+            const noteCell = tr.querySelector('td:nth-child(10)'); // خلية الملاحظة
+            if (noteCell && noteCell.style.display !== 'none') {
+              const msg = document.createElement('div');
+              msg.className = 'absent-message';
+              msg.style.cssText = `
+                color: #e74c3c;
+                font-size: 0.85rem;
+                font-style: italic;
+                text-align: center;
+                padding: 8px;
+                background: #fff5f5;
+                border-radius: 6px;
+                margin: 5px 0;
+                border: 1px dashed #e74c3c;
+              `;
+              msg.textContent = 'تم إخفاء الحقول غير المطلوبة للغياب';
+              noteCell.appendChild(msg);
+            }
+          } else {
+            tr.style.backgroundColor = '';
+            tr.style.borderLeft = '';
+          }
+        }
+        
+        // إضافة مستمع لتغيير الحالة
+        statusSelect.addEventListener('change', toggleFieldsByStatus);
+        
         // دوال تحديث الآيات حسب السورة
         function updateAyat(selSurah, ayahSel) {
           const surahIdx = surahs.findIndex(s => s.name === selSurah.value);
@@ -190,6 +455,9 @@
         // تهيئة افتراضية
         updateAyat(fromSurahSel, fromAyahSel);
         updateAyat(toSurahSel, toAyahSel);
+        
+        // تطبيق الحالة الافتراضية
+        toggleFieldsByStatus();
       });
       // زر الحفظ
       document.querySelectorAll('.save-btn').forEach((btn, idx) => {
@@ -197,22 +465,152 @@
           const tr = btn.closest('tr');
           const studentId = tr.getAttribute('data-id');
           const status = tr.querySelector('.status-select').value;
-          const fromSurah = tr.querySelector('.from-surah').value;
-          const fromAyah = parseInt(tr.querySelector('.from-ayah').value);
-          const toSurah = tr.querySelector('.to-surah').value;
-          const toAyah = parseInt(tr.querySelector('.to-ayah').value);
-          const evaluation = tr.querySelector('.eval-select').value;
-          const note = tr.querySelector('.note-input').value;
-          const date = new Date().toISOString().slice(0,10);
-          await db.collection('attendance').add({
-            studentId, date, status, fromSurah, fromAyah, toSurah, toAyah, evaluation, note
-          });
-          btn.textContent = 'تم الحفظ';
-          btn.style.background = '#009c4a';
-          setTimeout(()=>{ btn.textContent = 'حفظ'; btn.style.background = '#009ca6'; }, 2000);
+          const isAbsent = status === 'غائب';
+          
+          // البيانات الأساسية
+          const data = {
+            studentId,
+            date: new Date().toISOString().slice(0,10),
+            status
+          };
+          
+          // إضافة البيانات الإضافية فقط إذا كان حاضر
+          if (!isAbsent) {
+            data.fromSurah = tr.querySelector('.from-surah').value;
+            data.fromAyah = parseInt(tr.querySelector('.from-ayah').value);
+            data.toSurah = tr.querySelector('.to-surah').value;
+            data.toAyah = parseInt(tr.querySelector('.to-ayah').value);
+            data.evaluation = tr.querySelector('.eval-select').value;
+            data.note = tr.querySelector('.note-input').value;
+          }
+          
+          try {
+            await db.collection('attendance').add(data);
+            btn.textContent = 'تم الحفظ';
+            btn.style.background = '#009c4a';
+            setTimeout(()=>{ 
+              btn.textContent = 'حفظ'; 
+              btn.style.background = '#009ca6'; 
+            }, 2000);
+          } catch (error) {
+            console.error('خطأ في الحفظ:', error);
+            btn.textContent = 'خطأ';
+            btn.style.background = '#e74c3c';
+            setTimeout(()=>{ 
+              btn.textContent = 'حفظ'; 
+              btn.style.background = '#009ca6'; 
+            }, 2000);
+          }
         });
       });
     }
+
+    // إعداد محرك البحث والفلاتر
+    function setupSearchAndFilters() {
+      const searchInput = document.getElementById('searchInput');
+      const searchBtn = document.getElementById('searchBtn');
+      const statusFilter = document.getElementById('statusFilter');
+      const evaluationFilter = document.getElementById('evaluationFilter');
+      const clearFilters = document.getElementById('clearFilters');
+
+      // البحث عند الكتابة
+      searchInput.addEventListener('input', performSearch);
+      searchBtn.addEventListener('click', performSearch);
+      
+      // الفلاتر
+      statusFilter.addEventListener('change', performSearch);
+      evaluationFilter.addEventListener('change', performSearch);
+      
+      // مسح الفلاتر
+      clearFilters.addEventListener('click', () => {
+        searchInput.value = '';
+        statusFilter.value = '';
+        evaluationFilter.value = '';
+        performSearch();
+      });
+    }
+
+    // تنفيذ البحث والفلترة
+    function performSearch() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const evaluationFilter = document.getElementById('evaluationFilter').value;
+      
+      const rows = document.querySelectorAll('tr[data-idx]');
+      
+      rows.forEach(row => {
+        const studentName = row.cells[1].textContent.toLowerCase();
+        const parentName = row.cells[2].textContent.toLowerCase();
+        const status = row.querySelector('.status-select')?.value || '';
+        const evaluation = row.querySelector('.eval-select')?.value || '';
+        
+        let showRow = true;
+        
+        // فلترة النص
+        if (searchTerm && !studentName.includes(searchTerm) && !parentName.includes(searchTerm)) {
+          showRow = false;
+        }
+        
+        // فلترة الحالة
+        if (statusFilter && status !== statusFilter) {
+          showRow = false;
+        }
+        
+        // فلترة التقييم
+        if (evaluationFilter && evaluation !== evaluationFilter) {
+          showRow = false;
+        }
+        
+        if (showRow) {
+          row.classList.remove('hidden');
+          if (searchTerm && (studentName.includes(searchTerm) || parentName.includes(searchTerm))) {
+            row.classList.add('highlight');
+          } else {
+            row.classList.remove('highlight');
+          }
+        } else {
+          row.classList.add('hidden');
+          row.classList.remove('highlight');
+        }
+      });
+      
+      // إظهار رسالة إذا لم يتم العثور على نتائج
+      showNoResultsMessage();
+    }
+
+    // إظهار رسالة عدم وجود نتائج
+    function showNoResultsMessage() {
+      const visibleRows = document.querySelectorAll('tr[data-idx]:not(.hidden)');
+      const noResultsMsg = document.getElementById('noResultsMessage');
+      
+      if (visibleRows.length === 0) {
+        if (!noResultsMsg) {
+          const msg = document.createElement('div');
+          msg.id = 'noResultsMessage';
+          msg.style.cssText = `
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            font-size: 1.1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px dashed #009ca630;
+          `;
+          msg.innerHTML = `
+            <div style="font-size: 3rem; margin-bottom: 10px;">🔍</div>
+            <div>لم يتم العثور على نتائج</div>
+            <div style="font-size: 0.9rem; margin-top: 5px; opacity: 0.7;">جرب تغيير كلمات البحث أو الفلاتر</div>
+          `;
+          document.getElementById('studentsTableContainer').appendChild(msg);
+        }
+      } else {
+        if (noResultsMsg) {
+          noResultsMsg.remove();
+        }
+      }
+    }
+
     loadStudents();
   </script>
 </body>

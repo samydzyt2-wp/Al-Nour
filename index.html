@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>مدرسة النور القرآنية</title>
+  <link rel="icon" href="مدرسة-النــــور-_1_.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -261,6 +262,17 @@
       position: relative;
       padding: 8px 16px;
       border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-links span svg {
+      transition: transform 0.3s ease;
+    }
+
+    .nav-links span:hover svg {
+      transform: scale(1.1);
     }
 
     .nav-links span:hover {
@@ -452,6 +464,17 @@
       color: #009ca6;
       font-weight: 500;
       font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group label svg {
+      transition: transform 0.3s ease;
+    }
+
+    .form-group:focus-within label svg {
+      transform: scale(1.1);
     }
 
     .form-group input {
@@ -490,12 +513,18 @@
       position: relative;
       overflow: hidden;
       box-shadow: 0 2px 8px #009ca622;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
-
-    .login-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px #009ca644;
-      background: #007f8c;
+    
+    .login-button svg {
+      transition: transform 0.3s ease;
+    }
+    
+    .login-button:hover svg {
+      transform: translateX(3px);
     }
 
     .help-section {
@@ -518,6 +547,14 @@
       background: #009ca611;
       transform: translateY(-1px);
       color: #007f8c;
+    }
+
+    .help-link svg {
+      transition: transform 0.3s ease;
+    }
+    
+    .help-link:hover svg {
+      transform: rotate(15deg);
     }
 
     /* التصميم المتجاوب (Responsive Design) */
@@ -864,10 +901,24 @@
         </div>
       </div>
       <div class="nav-links">
-        <span class="active">الصفحة الرئيسية</span>
-        <span>صفحتنا الرسمية</span>
-        <span>أين نقع ؟</span>
-        <span>اتصل بنا</span>
+        <span onclick="window.location.href='about.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+          </svg>
+          اين نقع
+        </span>
+        <span onclick="window.location.href='contact.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/>
+          </svg>
+          اتصل بنا
+        </span>
+        <span onclick="window.location.href='facebook.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="currentColor"/>
+          </svg>
+          صفحتنا الرسمية
+        </span>
       </div>
     </div>
 
@@ -910,17 +961,37 @@
         </div>
         <form id="loginForm" autocomplete="off">
           <div class="form-group">
-            <label for="studentId">رقم التلميذ</label>
+            <label for="studentId">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+              </svg>
+              رقم التلميذ
+            </label>
             <input type="text" id="studentId" name="studentId" required>
           </div>
           <div class="form-group">
-            <label for="password">كلمة السر</label>
+            <label for="password">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="currentColor"/>
+              </svg>
+              كلمة السر
+            </label>
             <input type="password" id="password" name="password" required>
           </div>
-          <button type="submit" class="login-button">تسجيل الدخول</button>
+          <button type="submit" class="login-button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z" fill="currentColor"/>
+            </svg>
+            تسجيل الدخول
+          </button>
         </form>
         <div class="help-section">
-          <a href="#" class="help-link" id="helpLink">تحتاج مساعدة؟</a>
+          <a href="#" class="help-link" id="helpLink">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" fill="currentColor"/>
+            </svg>
+            تحتاج مساعدة؟
+          </a>
         </div>
       </div>
     </div>

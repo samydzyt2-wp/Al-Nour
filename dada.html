@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>مدرسة النور القرآنية</title>
+  <link rel="icon" href="مدرسة-النــــور-_1_.ico" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -151,6 +152,27 @@
       .info-card { min-width: unset; width: 100%; }
       .header-bar { flex-direction: column; padding: 20px 10px 0 10px; }
     }
+    .not-available-modal {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+      z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s;
+    }
+    .not-available-modal.show { opacity: 1; visibility: visible; }
+    .modal-content {
+      background: #fff; border-radius: 20px; padding: 30px; text-align: center;
+      max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      transform: scale(0.7); transition: transform 0.3s;
+    }
+    .not-available-modal.show .modal-content { transform: scale(1); }
+    .modal-icon { font-size: 2.5em; margin-bottom: 15px; }
+    .modal-title { color: #009ca6; font-size: 1.3em; font-weight: bold; margin-bottom: 10px; }
+    .modal-message { color: #666; font-size: 1em; margin-bottom: 20px; }
+    .modal-close-btn {
+      background: linear-gradient(135deg, #009ca6, #00b8c4); color: #fff; border: none;
+      padding: 12px 30px; border-radius: 25px; font-size: 1em; font-weight: 600; cursor: pointer;
+      transition: all 0.3s;
+    }
+    .modal-close-btn:hover { background: #007f8c; }
   </style>
 </head>
 <body>
@@ -391,6 +413,133 @@
       }
       .parent-box.horizontal-box {
         max-width: 98vw;
+        padding: 20px 15px 15px 15px;
+        margin: 20px 10px;
+      }
+      .navbar {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+      .nav-links span {
+        font-size: 0.9em;
+        padding: 6px 12px;
+      }
+      .logo-text h2 {
+        font-size: 1.2em;
+      }
+      .logo-text small {
+        font-size: 0.75em;
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .parent-box.horizontal-box {
+        padding: 15px 10px 10px 10px;
+        margin: 10px 5px;
+        border-radius: 15px;
+      }
+      .parent-name {
+        font-size: 1rem;
+        margin-bottom: 4px;
+      }
+      .welcome-msg {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        line-height: 1.4;
+      }
+      .info-cards.horizontal-cards {
+        gap: 8px;
+      }
+      .info-card {
+        padding: 12px 15px;
+        border-radius: 8px;
+      }
+      .info-label {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+      }
+      .info-value {
+        font-size: 0.95rem;
+      }
+      .navbar {
+        padding: 10px 15px;
+      }
+      .nav-links {
+        gap: 10px;
+      }
+      .nav-links span {
+        font-size: 0.85em;
+        padding: 5px 10px;
+      }
+      .logout-btn {
+        font-size: 0.85em;
+        padding: 6px 16px;
+        margin-right: 0;
+      }
+      .logo-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+      }
+      .logo-text h2 {
+        font-size: 1.1em;
+      }
+      .logo-text small {
+        font-size: 0.7em;
+      }
+      .main-content {
+        padding: 20px 5px;
+        min-height: calc(100vh - 120px);
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .parent-box.horizontal-box {
+        padding: 12px 8px 8px 8px;
+        margin: 8px 3px;
+      }
+      .parent-name {
+        font-size: 0.95rem;
+      }
+      .welcome-msg {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+      }
+      .info-card {
+        padding: 10px 12px;
+      }
+      .info-label {
+        font-size: 0.85rem;
+      }
+      .info-value {
+        font-size: 0.9rem;
+      }
+      .navbar {
+        padding: 8px 10px;
+      }
+      .nav-links {
+        gap: 8px;
+      }
+      .nav-links span {
+        font-size: 0.8em;
+        padding: 4px 8px;
+      }
+      .logo-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+      }
+      .logo-text h2 {
+        font-size: 1em;
+      }
+      .logo-text small {
+        font-size: 0.65em;
       }
     }
   </style>
@@ -454,7 +603,32 @@
         });
       }
     });
+
+    function showNotAvailableModal() {
+      document.getElementById('notAvailableModal').classList.add('show');
+    }
+    function closeNotAvailableModal() {
+      document.getElementById('notAvailableModal').classList.remove('show');
+    }
+
+    // ربط الأزرار
+    document.querySelectorAll('.nav-links span').forEach(link => {
+      const txt = link.textContent.trim();
+      if (txt === 'اعلانات' || txt === 'كشف النقاط') {
+        link.style.cursor = 'pointer';
+        link.onclick = showNotAvailableModal;
+      }
+    });
   </script>
+  <!-- نافذة رسالة ليس متوفر الآن -->
+  <div id="notAvailableModal" class="not-available-modal">
+    <div class="modal-content">
+      <div class="modal-icon">🚧</div>
+      <div class="modal-title">ليس متوفر الآن</div>
+      <div class="modal-message">هذه الخدمة غير متوفرة حالياً. يرجى المحاولة لاحقاً.</div>
+      <button class="modal-close-btn" onclick="closeNotAvailableModal()">إغلاق</button>
+    </div>
+  </div>
 </body>
 </html>
 
