@@ -86,6 +86,7 @@
     // بناء الجدول
     function renderTable(records) {
       let html = `<table><thead><tr>
+        <th>اليوم</th>
         <th>تاريخ</th>
         <th>الحالة</th>
         <th>التحديد القرآني</th>
@@ -93,7 +94,7 @@
         <th>ملاحظة</th>
       </tr></thead><tbody>`;
       if (records.length === 0) {
-        html += `<tr><td colspan="5">لا توجد بيانات بعد.</td></tr>`;
+        html += `<tr><td colspan="6">لا توجد بيانات بعد.</td></tr>`;
       } else {
         records.forEach(rec => {
           const statusClass = rec.status === 'حاضر' ? 'status-present' : 'status-absent';
@@ -102,6 +103,7 @@
             quranRange = `من ${rec.fromSurah} الآية ${rec.fromAyah} إلى ${rec.toSurah} الآية ${rec.toAyah}`;
           }
           html += `<tr>
+            <td>${getDayName(rec.date) || '-'}</td>
             <td>${rec.date || '-'}</td>
             <td class="${statusClass}">${rec.status || '-'}</td>
             <td>${quranRange}</td>
@@ -112,6 +114,13 @@
       }
       html += '</tbody></table>';
       document.getElementById('trackingTableContainer').innerHTML = html;
+    }
+
+    // دالة استخراج اسم اليوم من التاريخ
+    function getDayName(dateStr) {
+      const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+      const d = new Date(dateStr);
+      return days[d.getDay()];
     }
 
     loadTracking();
