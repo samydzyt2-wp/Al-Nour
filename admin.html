@@ -361,6 +361,18 @@
             <option value="جيد">جيد</option>
             <option value="جيد جدا">جيد جدا</option>
           </select>
+          <label for="fawj">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+            </svg>
+            الفوج
+          </label>
+          <select id="fawj" required>
+            <option value="فوج الطالب أسامة">فوج الطالب أسامة</option>
+            <option value="فوج الطالب حمودة">فوج الطالب حمودة</option>
+            <option value="فوج الطالب محمد البشير">فوج الطالب محمد البشير</option>
+            <option value="فوج الطالب محمد الحاج">فوج الطالب محمد الحاج</option>
+          </select>
           <button type="submit">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
@@ -424,6 +436,7 @@
         <th>عدد السور</th>
         <th>أيام الحضور</th>
         <th>التقييم</th>
+        <th>الفوج</th>
         <th>تعديل</th>
       </tr></thead><tbody>`;
       students.forEach((student, idx) => {
@@ -434,6 +447,7 @@
           <td class="surahsCount">${student.surahsCount || ''}</td>
           <td class="attendanceDays">${student.attendanceDays || ''}</td>
           <td class="evaluation">${student.evaluation || ''}</td>
+          <td class="fawj">${student.fawj || ''}</td>
           <td><button class="edit-btn">تعديل</button></td>
         </tr>`;
       });
@@ -452,6 +466,7 @@
           const surahsCount = tr.querySelector('.surahsCount').textContent;
           const attendanceDays = tr.querySelector('.attendanceDays').textContent;
           const evaluation = tr.querySelector('.evaluation').textContent;
+          const fawj = tr.querySelector('.fawj').textContent;
           tr.innerHTML = `
             <td>${id}</td>
             <td><input type="text" value="${studentName}"></td>
@@ -467,6 +482,14 @@
               </select>
             </td>
             <td>
+              <select>
+                <option value="فوج الطالب أسامة" ${fawj === 'فوج الطالب أسامة' ? 'selected' : ''}>فوج الطالب أسامة</option>
+                <option value="فوج الطالب حمودة" ${fawj === 'فوج الطالب حمودة' ? 'selected' : ''}>فوج الطالب حمودة</option>
+                <option value="فوج الطالب محمد البشير" ${fawj === 'فوج الطالب محمد البشير' ? 'selected' : ''}>فوج الطالب محمد البشير</option>
+                <option value="فوج الطالب محمد الحاج" ${fawj === 'فوج الطالب محمد الحاج' ? 'selected' : ''}>فوج الطالب محمد الحاج</option>
+              </select>
+            </td>
+            <td>
               <button class="save-btn">حفظ</button>
               <button class="cancel-btn">إلغاء</button>
             </td>
@@ -478,12 +501,14 @@
             const newSurahsCount = parseInt(tr.querySelector('td:nth-child(4) input').value.trim(), 10);
             const newAttendanceDays = parseInt(tr.querySelector('td:nth-child(5) input').value.trim(), 10);
             const newEvaluation = tr.querySelector('td:nth-child(6) select').value;
+            const newFawj = tr.querySelector('td:nth-child(7) select').value;
             await db.collection('students').doc(id).update({
               studentName: newStudentName,
               parentName: newParentName,
               surahsCount: newSurahsCount,
               attendanceDays: newAttendanceDays,
-              evaluation: newEvaluation
+              evaluation: newEvaluation,
+              fawj: newFawj
             });
             // إعادة تحميل القائمة بعد الحفظ
             document.getElementById('editStudentBtn').click();
@@ -507,6 +532,7 @@
       const surahsCount = parseInt(document.getElementById('surahsCount').value.trim(), 10) || 0;
       const attendanceDays = parseInt(document.getElementById('attendanceDays').value.trim(), 10) || 0;
       const evaluation = document.getElementById('evaluation').value;
+      const fawj = document.getElementById('fawj').value;
       const resultDiv = document.getElementById('addStudentResult');
       if (!id || !studentName || !parentName || !phone || !password) {
         resultDiv.textContent = 'يرجى تعبئة جميع الحقول المطلوبة';
@@ -522,7 +548,7 @@
           return;
         }
         await db.collection('students').doc(id).set({
-          studentName, parentName, phone, password, surahsCount, attendanceDays, evaluation
+          studentName, parentName, phone, password, surahsCount, attendanceDays, evaluation, fawj
         });
         resultDiv.textContent = 'تمت إضافة الطالب بنجاح';
         resultDiv.className = 'result success';
