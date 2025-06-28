@@ -97,7 +97,7 @@
         html += `<tr><td colspan="6">لا توجد بيانات بعد.</td></tr>`;
       } else {
         records.forEach(rec => {
-          const statusClass = rec.status === 'حاضر' ? 'status-present' : 'status-absent';
+          const statusClass = (rec.status === 'حاضر' || rec.status === 'مراجعة') ? 'status-present' : 'status-absent';
           let quranRange = '-';
           if (rec.fromSurah && rec.fromAyah && rec.toSurah && rec.toAyah) {
             quranRange = `من ${rec.fromSurah} الآية ${rec.fromAyah} إلى ${rec.toSurah} الآية ${rec.toAyah}`;
