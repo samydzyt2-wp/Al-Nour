@@ -630,6 +630,27 @@
       border: 1px solid rgba(231, 76, 60, 0.2);
     }
     
+    input[type=number].from-ayah, input[type=number].to-ayah, #bulkFromAyah, #bulkToAyah {
+      padding: 6px 8px;
+      border: 2px solid #e0f7fa;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.95em;
+      background: #f8f9fa;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+      text-align: right;
+      direction: rtl;
+      height: 36px;
+      min-width: 60px;
+      max-width: 120px;
+    }
+    input[type=number].from-ayah:focus, input[type=number].to-ayah:focus, #bulkFromAyah:focus, #bulkToAyah:focus {
+      outline: none;
+      border-color: #009ca6;
+      background: #fff;
+      box-shadow: 0 0 0 3px #009ca615;
+    }
   </style>
 </head>
 <body>
@@ -732,17 +753,13 @@
                 <option value="">اختر السورة</option>
               </select>
               <label>من الآية:</label>
-              <select id="bulkFromAyah" class="form-control">
-                <option value="">اختر الآية</option>
-              </select>
+              <input type="number" id="bulkFromAyah" class="form-control" placeholder="رقم الآية">
               <label>إلى السورة:</label>
               <select id="bulkToSurah" class="form-control">
                 <option value="">اختر السورة</option>
               </select>
               <label>إلى الآية:</label>
-              <select id="bulkToAyah" class="form-control">
-                <option value="">اختر الآية</option>
-              </select>
+              <input type="number" id="bulkToAyah" class="form-control" placeholder="رقم الآية">
               <label>التقييم:</label>
               <select id="bulkEvaluation" class="form-control">
                 <option value="ضعيف">ضعيف</option>
@@ -897,7 +914,7 @@
           </td>
           <td>
             <label class="table-label">من الآية</label>
-            <select class="from-ayah"></select>
+            <input type="number" class="from-ayah" placeholder="رقم الآية">
           </td>
           <td>
             <label class="table-label">إلى السورة</label>
@@ -905,7 +922,7 @@
           </td>
           <td>
             <label class="table-label">إلى الآية</label>
-            <select class="to-ayah"></select>
+            <input type="number" class="to-ayah" placeholder="رقم الآية">
           </td>
           <td>
             <label class="table-label">التقييم</label>

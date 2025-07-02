@@ -8,23 +8,72 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body { 
       font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; 
-      background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       margin: 0; 
       padding: 0; 
       min-height: 100vh;
+      color: #333;
+      line-height: 1.6;
     }
-    
+
+    /* تأثيرات الخلفية المتحركة */
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      overflow: hidden;
+    }
+
+    .animated-bg::before,
+    .animated-bg::after {
+      content: '';
+      position: absolute;
+      width: 150vmax;
+      height: 150vmax;
+      top: -50vmax;
+      left: -50vmax;
+      z-index: -1;
+      background: rgba(255, 255, 255, 0.05);
+      animation: move 20s infinite linear;
+      transform-origin: 50% 50%;
+    }
+
+    .animated-bg::after {
+      left: auto;
+      right: -50vmax;
+      animation-delay: -10s;
+    }
+
+    @keyframes move {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* الشريط العلوي المحسن */
     .navbar { 
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
       padding: 20px 50px; 
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid #009ca622;
-      box-shadow: 0 2px 20px rgba(0, 156, 166, 0.1);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     
     .logo-section { 
@@ -34,221 +83,400 @@
     }
     
     .logo-icon { 
-      width: 45px; 
-      height: 45px; 
-      background: linear-gradient(135deg, #009ca6, #00b8c4);
+      width: 50px; 
+      height: 50px; 
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: #fff; 
-      border-radius: 12px; 
+      border-radius: 15px; 
       display: flex; 
       align-items: center; 
       justify-content: center; 
-      font-size: 20px; 
+      font-size: 22px; 
       font-weight: bold;
-      box-shadow: 0 4px 15px rgba(0, 156, 166, 0.3);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .logo-icon:hover {
+      transform: scale(1.1) rotate(5deg);
     }
     
     .logo-text h2 { 
-      color: #009ca6; 
-      font-size: 1.4em; 
-      font-weight: 600; 
-      margin-bottom: 2px; 
+      color: #333; 
+      font-size: 1.5em; 
+      font-weight: 700; 
+      margin-bottom: 4px; 
     }
     
     .logo-text small { 
-      color: #009ca6; 
-      font-size: 0.8em; 
-      font-weight: 300; 
+      color: #666; 
+      font-size: 0.85em; 
+      font-weight: 400; 
+    }
+
+    .admin-badge {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9em;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
     
     .main-content { 
       padding: 40px 20px; 
-      max-width: 1000px; 
+      max-width: 1400px; 
       margin: 0 auto; 
     }
-    
-    .admin-box { 
+
+    /* تصميم صناديق المحتوى */
+    .content-card {
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border-radius: 20px; 
-      max-width: 400px; 
-      margin: 40px auto; 
-      padding: 35px; 
-      box-shadow: 0 8px 32px rgba(0, 156, 166, 0.15);
-      border: 1px solid rgba(0, 156, 166, 0.1);
-      transition: all 0.3s ease;
+      backdrop-filter: blur(20px);
+      border-radius: 24px; 
+      padding: 40px; 
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.4s ease;
+      margin-bottom: 30px;
     }
-    
-    .admin-box:hover {
+
+    .content-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0, 156, 166, 0.2);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
     }
-    
-    h2 { 
-      color: #009ca6; 
-      text-align: center; 
-      margin-bottom: 25px;
-      font-size: 1.5em;
-      font-weight: 600;
+
+    .login-card {
+      max-width: 450px;
+      margin: 60px auto;
+    }
+
+    .admin-panel {
+      display: none;
+    }
+
+    /* تصميم العناوين */
+    .section-title {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 1.8em;
+      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
     }
-    
-    h2 svg {
+
+    .section-title svg {
       transition: transform 0.3s ease;
+      color: #667eea;
     }
-    
-    .admin-box:hover h2 svg {
-      transform: scale(1.1);
+
+    .content-card:hover .section-title svg {
+      transform: scale(1.2);
     }
-    
-    label { 
+
+    /* تصميم النماذج */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-label {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin: 15px 0 8px; 
-      color: #009ca6; 
-      font-weight: 500;
+      margin-bottom: 10px; 
+      color: #333; 
+      font-weight: 600;
       font-size: 0.95em;
     }
-    
-    label svg {
+
+    .form-label svg {
+      color: #667eea;
       transition: transform 0.3s ease;
     }
-    
-    .form-group:focus-within label svg {
+
+    .form-group:focus-within .form-label svg {
       transform: scale(1.1);
     }
-    
-    input, select { 
+
+    .form-input {
       width: 100%; 
-      padding: 12px 16px; 
-      border-radius: 10px; 
-      border: 2px solid #e0f7fa; 
-      margin-bottom: 15px; 
+      padding: 14px 18px; 
+      border-radius: 12px; 
+      border: 2px solid #e1e5e9; 
       font-family: inherit;
       font-size: 1em;
       transition: all 0.3s ease;
       background: #f8f9fa;
     }
-    
-    input:focus, select:focus {
+
+    .form-input:focus {
       outline: none;
-      border-color: #009ca6;
-      box-shadow: 0 0 0 3px rgba(0, 156, 166, 0.1);
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
       background: #fff;
+      transform: translateY(-2px);
     }
-    
-    button, .edit-btn, .save-btn, .cancel-btn { 
-      background: linear-gradient(135deg, #009ca6, #00b8c4);
+
+    /* تصميم الأزرار */
+    .btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: #fff; 
       border: none; 
-      padding: 12px 20px; 
-      border-radius: 10px; 
+      padding: 14px 28px; 
+      border-radius: 12px; 
       font-weight: 600; 
       cursor: pointer; 
-      margin: 5px 0; 
       transition: all 0.3s ease;
       font-family: inherit;
       font-size: 1em;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
-    
-    button:hover, .edit-btn:hover, .save-btn:hover, .cancel-btn:hover { 
-      background: linear-gradient(135deg, #007f8c, #009ca6);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 156, 166, 0.3);
+
+    .btn:hover {
+      background: linear-gradient(135deg, #5a6fd8, #6a4190);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
     }
-    
-    .result { 
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #7f8c8d, #6c7b7d);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+    }
+
+    .btn-success:hover {
+      background: linear-gradient(135deg, #229954, #27ae60);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+
+    .btn-danger:hover {
+      background: linear-gradient(135deg, #c0392b, #a93226);
+    }
+
+    /* تصميم الرسائل */
+    .message {
       margin-top: 20px; 
       text-align: center; 
-      padding: 10px;
-      border-radius: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
       font-weight: 500;
+      border: 1px solid;
     }
-    
-    .success { 
-      color: #009ca6; 
-      background: rgba(0, 156, 166, 0.1);
-      border: 1px solid rgba(0, 156, 166, 0.2);
+
+    .message.success { 
+      color: #27ae60; 
+      background: rgba(39, 174, 96, 0.1);
+      border-color: rgba(39, 174, 96, 0.2);
     }
-    
-    .error { 
+
+    .message.error { 
       color: #e74c3c; 
       background: rgba(231, 76, 60, 0.1);
-      border: 1px solid rgba(231, 76, 60, 0.2);
+      border-color: rgba(231, 76, 60, 0.2);
     }
-    
+
+    /* تصميم الجداول */
+    .table-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px; 
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-top: 30px;
+    }
+
     .students-table { 
       width: 100%; 
       border-collapse: separate; 
       border-spacing: 0; 
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border-radius: 20px; 
-      box-shadow: 0 8px 32px rgba(0, 156, 166, 0.15);
-      margin-top: 30px; 
-      overflow: hidden;
-      border: 1px solid rgba(0, 156, 166, 0.1);
+      background: transparent;
+      min-width: 900px;
     }
-    
-    th, td { 
-      padding: 12px 8px; 
+
+    .students-table th { 
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff; 
+      padding: 18px 12px; 
       text-align: center; 
-      font-size: 1em; 
-    }
-    
-    th { 
-      background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-      color: #009ca6; 
-      font-weight: 700; 
+      font-weight: 600; 
       font-size: 0.95em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
-    
-    tr:not(:last-child) td { 
-      border-bottom: 1px solid rgba(0, 156, 166, 0.1); 
+
+    .students-table td { 
+      padding: 16px 12px; 
+      text-align: center; 
+      font-size: 0.95em; 
+      border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+      transition: all 0.3s ease;
     }
-    
-    tr:hover {
-      background: rgba(0, 156, 166, 0.05);
+
+    .students-table tr:hover {
+      background: rgba(102, 126, 234, 0.05);
+      transform: scale(1.01);
     }
-    
-    .edit-row input { 
-      width: 90%; 
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid #009ca6;
+
+    .students-table tr:last-child td {
+      border-bottom: none;
     }
-    
+
+    /* تصميم صف التعديل */
+    .edit-row {
+      background: rgba(102, 126, 234, 0.1) !important;
+      animation: editRowSlide 0.3s ease-out;
+    }
+
+    @keyframes editRowSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .edit-row input,
     .edit-row select {
       width: 90%;
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid #009ca6;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 2px solid #667eea;
+      font-family: inherit;
+      font-size: 0.9em;
+      background: #fff;
+      transition: all 0.3s ease;
     }
-    
-    @media (max-width: 700px) {
-      .main-content { padding: 20px 10px; }
+
+    .edit-row input:focus,
+    .edit-row select:focus {
+      outline: none;
+      border-color: #764ba2;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* تصميم متجاوب */
+    @media (max-width: 1200px) {
+      .form-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+      
+      .main-content {
+        max-width: 1000px;
+      }
+    }
+
+    @media (max-width: 768px) {
       .navbar { 
         flex-direction: column; 
-        padding: 15px 20px;
+        padding: 20px;
         gap: 15px;
       }
-      .logo-section { gap: 10px; }
-      .logo-icon { width: 35px; height: 35px; font-size: 16px; }
-      .logo-text h2 { font-size: 1.2em; }
-      .logo-text small { font-size: 0.75em; }
-      th, td { font-size: 0.9em; padding: 8px 4px; }
-      .admin-box { padding: 25px; margin: 20px auto; }
+
+      .main-content { 
+        padding: 20px 10px; 
+      }
+
+      .content-card {
+        padding: 25px;
+        margin-bottom: 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .section-title {
+        font-size: 1.5em;
+      }
+
+      .students-table {
+        font-size: 0.85em;
+        min-width: 700px;
+      }
+
+      .students-table th,
+      .students-table td {
+        padding: 12px 8px;
+      }
+
+      .btn {
+        padding: 12px 20px;
+        font-size: 0.9em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 15px;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+
+      .logo-text h2 {
+        font-size: 1.2em;
+      }
+
+      .content-card {
+        padding: 20px;
+        border-radius: 16px;
+      }
+
+      .section-title {
+        font-size: 1.3em;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .students-table {
+        font-size: 0.8em;
+        min-width: 600px;
+      }
+
+      .students-table th,
+      .students-table td {
+        padding: 8px 4px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- خلفية متحركة -->
+  <div class="animated-bg"></div>
+
   <div class="navbar">
     <div class="logo-section">
       <div class="logo-icon">ن</div>
@@ -257,138 +485,171 @@
         <small>الموقع الرسمي للمدرسة النور القرآنية</small>
       </div>
     </div>
-    <div><b>لوحة تحكم الأدمن</b></div>
+    <div class="admin-badge">لوحة تحكم الأدمن</div>
   </div>
+
   <div class="main-content">
-    <div class="admin-box" id="loginBox">
-      <h2>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- نموذج تسجيل الدخول -->
+    <div class="content-card login-card" id="loginBox">
+      <h2 class="section-title">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
         </svg>
         تسجيل دخول الأدمن
       </h2>
       <form id="adminLoginForm">
-        <label for="adminPhone">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="currentColor"/>
-          </svg>
-          رقم الهاتف
-        </label>
-        <input type="text" id="adminPhone" required>
-        <label for="adminPassword">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="currentColor"/>
-          </svg>
-          كلمة السر
-        </label>
-        <input type="password" id="adminPassword" required>
-        <button type="submit">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div class="form-group">
+          <label for="adminPhone" class="form-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="currentColor"/>
+            </svg>
+            رقم الهاتف
+          </label>
+          <input type="text" id="adminPhone" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label for="adminPassword" class="form-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="currentColor"/>
+            </svg>
+            كلمة السر
+          </label>
+          <input type="password" id="adminPassword" class="form-input" required>
+        </div>
+        <button type="submit" class="btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z" fill="currentColor"/>
           </svg>
           دخول
         </button>
       </form>
-      <div class="result" id="loginResult"></div>
+      <div class="message" id="loginResult"></div>
     </div>
-    <div id="adminPanel" style="display:none;">
-      <div id="addStudentBox" class="admin-box" style="max-width:600px; margin-bottom:30px;">
-        <h2>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- لوحة تحكم الأدمن -->
+    <div id="adminPanel" class="admin-panel">
+      <!-- نموذج إضافة طالب جديد -->
+      <div class="content-card" id="addStudentBox">
+        <h2 class="section-title">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 8H17c-.8 0-1.54.37-2.01 1l-1.7 2.26V15h-1.5v-3.5l-1.7-2.26A2.5 2.5 0 0 0 7.54 8H6.46c-.8 0-1.54.37-2.01 1L1.96 15.5H4.5V22h2v-6h1.5v6h2v-6h1.5v6h2v-6H16z" fill="currentColor"/>
           </svg>
           إضافة طالب جديد
         </h2>
         <form id="addStudentForm" autocomplete="off">
-          <label for="studentId">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
-            </svg>
-            رقم التلميذ
-          </label>
-          <input type="text" id="studentId" required>
-          <label for="studentName">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
-            </svg>
-            اسم الابن
-          </label>
-          <input type="text" id="studentName" required>
-          <label for="parentName">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
-            </svg>
-            اسم ولي الأمر
-          </label>
-          <input type="text" id="parentName" required>
-          <label for="phone">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="currentColor"/>
-            </svg>
-            رقم الهاتف
-          </label>
-          <input type="text" id="phone" required>
-          <label for="password">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="currentColor"/>
-            </svg>
-            كلمة السر
-          </label>
-          <input type="text" id="password" required>
-          <label for="surahsCount">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z" fill="currentColor"/>
-            </svg>
-            عدد الاحزاب المحفوظة
-          </label>
-          <input type="number" id="surahsCount" min="0" value="0">
-          <label for="attendanceDays">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" fill="currentColor"/>
-            </svg>
-            أيام الحضور
-          </label>
-          <input type="number" id="attendanceDays" min="0" value="0">
-          <label for="evaluation">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
-            </svg>
-            التقييم
-          </label>
-          <select id="evaluation">
-            <option value="ضعيف">ضعيف</option>
-            <option value="حسن">حسن</option>
-            <option value="جيد">جيد</option>
-            <option value="جيد جدا">جيد جدا</option>
-          </select>
-          <label for="fawj">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
-            </svg>
-            الفوج
-          </label>
-          <select id="fawj" required>
-            <option value="فوج الطالب أسامة">فوج الطالب أسامة</option>
-            <option value="فوج الطالب حمودة">فوج الطالب حمودة</option>
-            <option value="فوج الطالب محمد البشير">فوج الطالب محمد البشير</option>
-            <option value="فوج الطالب محمد الحاج">فوج الطالب محمد الحاج</option>
-          </select>
-          <button type="submit">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="studentId" class="form-label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                </svg>
+                رقم التلميذ
+              </label>
+              <input type="text" id="studentId" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="studentName" class="form-label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                </svg>
+                اسم الابن
+              </label>
+              <input type="text" id="studentName" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="parentName" class="form-label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                </svg>
+                اسم ولي الأمر
+              </label>
+              <input type="text" id="parentName" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="phone" class="form-label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="currentColor"/>
+                </svg>
+                رقم الهاتف
+              </label>
+              <input type="text" id="phone" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="password" class="form-label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="currentColor"/>
+                </svg>
+                كلمة السر
+              </label>
+              <input type="text" id="password" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="surahsCount" class="form-label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z" fill="currentColor"/>
+                </svg>
+                عدد الاحزاب المحفوظة
+              </label>
+              <input type="number" id="surahsCount" class="form-input" min="0" value="0">
+            </div>
+            <div class="form-group">
+              <label for="attendanceDays" class="form-label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" fill="currentColor"/>
+                </svg>
+                أيام الحضور
+              </label>
+              <input type="number" id="attendanceDays" class="form-input" min="0" value="0">
+            </div>
+            <div class="form-group">
+              <label for="evaluation" class="form-label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
+                </svg>
+                التقييم
+              </label>
+              <select id="evaluation" class="form-input">
+                <option value="ضعيف">ضعيف</option>
+                <option value="حسن">حسن</option>
+                <option value="جيد">جيد</option>
+                <option value="جيد جدا">جيد جدا</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fawj" class="form-label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                </svg>
+                الفوج
+              </label>
+              <select id="fawj" class="form-input" required>
+                <option value="فوج الطالب أسامة">فوج الطالب أسامة</option>
+                <option value="فوج الطالب حمودة">فوج الطالب حمودة</option>
+                <option value="فوج الطالب محمد البشير">فوج الطالب محمد البشير</option>
+                <option value="فوج الطالب محمد الحاج">فوج الطالب محمد الحاج</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
             </svg>
             إضافة الطالب
           </button>
         </form>
-        <div class="result" id="addStudentResult"></div>
+        <div class="message" id="addStudentResult"></div>
       </div>
-      <button id="editStudentBtn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- زر تعديل الطلاب -->
+      <button id="editStudentBtn" class="btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
         </svg>
-        تعديل الطالب
+        تعديل الطلاب
       </button>
-      <div id="studentsEditSection" style="margin-top:30px;"></div>
+
+      <!-- قسم تعديل الطلاب -->
+      <div id="studentsEditSection"></div>
     </div>
   </div>
   <script>
@@ -414,112 +675,266 @@
       e.preventDefault();
       const phone = document.getElementById('adminPhone').value.trim();
       const pass = document.getElementById('adminPassword').value.trim();
+      
       if(phone === ADMIN_PHONE && pass === ADMIN_PASS) {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
+        showMessage('تم تسجيل الدخول بنجاح', 'success');
       } else {
         document.getElementById('loginResult').textContent = 'بيانات الأدمن غير صحيحة';
-        document.getElementById('loginResult').className = 'result error';
+        document.getElementById('loginResult').className = 'message error';
       }
     };
 
     // عند الضغط على زر تعديل الطالب
     document.getElementById('editStudentBtn').onclick = async function() {
       const section = document.getElementById('studentsEditSection');
-      section.innerHTML = 'جاري تحميل الطلاب...';
-      const snap = await db.collection('students').get();
-      const students = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      let html = `<table class="students-table"><thead><tr>
-        <th>رقم التلميذ</th>
-        <th>اسم الابن</th>
-        <th>اسم ولي الأمر</th>
-        <th>عدد السور</th>
-        <th>أيام الحضور</th>
-        <th>التقييم</th>
-        <th>الفوج</th>
-        <th>تعديل</th>
-      </tr></thead><tbody>`;
-      students.forEach((student, idx) => {
-        html += `<tr data-id="${student.id}">
-          <td>${student.id}</td>
-          <td class="studentName">${student.studentName || ''}</td>
-          <td class="parentName">${student.parentName || ''}</td>
-          <td class="surahsCount">${student.surahsCount || ''}</td>
-          <td class="attendanceDays">${student.attendanceDays || ''}</td>
-          <td class="evaluation">${student.evaluation || ''}</td>
-          <td class="fawj">${student.fawj || ''}</td>
-          <td><button class="edit-btn">تعديل</button></td>
-        </tr>`;
-      });
-      html += '</tbody></table>';
-      section.innerHTML = html;
-
-      // عند الضغط على زر تعديل
-      section.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.onclick = function() {
-          const tr = btn.closest('tr');
-          if (tr.classList.contains('edit-row')) return;
-          tr.classList.add('edit-row');
-          const id = tr.getAttribute('data-id');
-          const studentName = tr.querySelector('.studentName').textContent;
-          const parentName = tr.querySelector('.parentName').textContent;
-          const surahsCount = tr.querySelector('.surahsCount').textContent;
-          const attendanceDays = tr.querySelector('.attendanceDays').textContent;
-          const evaluation = tr.querySelector('.evaluation').textContent;
-          const fawj = tr.querySelector('.fawj').textContent;
-          tr.innerHTML = `
-            <td>${id}</td>
-            <td><input type="text" value="${studentName}"></td>
-            <td><input type="text" value="${parentName}"></td>
-            <td><input type="number" value="${surahsCount}"></td>
-            <td><input type="number" value="${attendanceDays}"></td>
-            <td>
-              <select>
-                <option value="ضعيف" ${evaluation === 'ضعيف' ? 'selected' : ''}>ضعيف</option>
-                <option value="حسن" ${evaluation === 'حسن' ? 'selected' : ''}>حسن</option>
-                <option value="جيد" ${evaluation === 'جيد' ? 'selected' : ''}>جيد</option>
-                <option value="جيد جدا" ${evaluation === 'جيد جدا' ? 'selected' : ''}>جيد جدا</option>
-              </select>
-            </td>
-            <td>
-              <select>
-                <option value="فوج الطالب أسامة" ${fawj === 'فوج الطالب أسامة' ? 'selected' : ''}>فوج الطالب أسامة</option>
-                <option value="فوج الطالب حمودة" ${fawj === 'فوج الطالب حمودة' ? 'selected' : ''}>فوج الطالب حمودة</option>
-                <option value="فوج الطالب محمد البشير" ${fawj === 'فوج الطالب محمد البشير' ? 'selected' : ''}>فوج الطالب محمد البشير</option>
-                <option value="فوج الطالب محمد الحاج" ${fawj === 'فوج الطالب محمد الحاج' ? 'selected' : ''}>فوج الطالب محمد الحاج</option>
-              </select>
-            </td>
-            <td>
-              <button class="save-btn">حفظ</button>
-              <button class="cancel-btn">إلغاء</button>
-            </td>
+      section.innerHTML = '<div class="content-card"><div class="section-title">جاري تحميل الطلاب...</div></div>';
+      
+      try {
+        const snap = await db.collection('students').get();
+        const students = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        if (students.length === 0) {
+          section.innerHTML = `
+            <div class="content-card">
+              <div class="section-title">لا يوجد طلاب</div>
+              <p style="text-align: center; color: #666;">لم يتم إضافة أي طلاب بعد</p>
+            </div>
           `;
-          // زر الحفظ
-          tr.querySelector('.save-btn').onclick = async function() {
-            const newStudentName = tr.querySelector('td:nth-child(2) input').value.trim();
-            const newParentName = tr.querySelector('td:nth-child(3) input').value.trim();
-            const newSurahsCount = parseInt(tr.querySelector('td:nth-child(4) input').value.trim(), 10);
-            const newAttendanceDays = parseInt(tr.querySelector('td:nth-child(5) input').value.trim(), 10);
-            const newEvaluation = tr.querySelector('td:nth-child(6) select').value;
-            const newFawj = tr.querySelector('td:nth-child(7) select').value;
-            await db.collection('students').doc(id).update({
-              studentName: newStudentName,
-              parentName: newParentName,
-              surahsCount: newSurahsCount,
-              attendanceDays: newAttendanceDays,
-              evaluation: newEvaluation,
-              fawj: newFawj
-            });
-            // إعادة تحميل القائمة بعد الحفظ
-            document.getElementById('editStudentBtn').click();
+          return;
+        }
+
+        let html = `
+          <div class="table-container">
+            <table class="students-table">
+              <thead>
+                <tr>
+                  <th>رقم التلميذ</th>
+                  <th>اسم الابن</th>
+                  <th>اسم ولي الأمر</th>
+                  <th>عدد السور</th>
+                  <th>أيام الحضور</th>
+                  <th>التقييم</th>
+                  <th>الفوج</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+        
+        students.forEach((student, idx) => {
+          html += `
+            <tr data-id="${student.id}">
+              <td><strong>${student.id}</strong></td>
+              <td class="studentName">${student.studentName || ''}</td>
+              <td class="parentName">${student.parentName || ''}</td>
+              <td class="surahsCount">${student.surahsCount || '0'}</td>
+              <td class="attendanceDays">${student.attendanceDays || '0'}</td>
+              <td class="evaluation">
+                <span class="evaluation-badge ${getEvaluationClass(student.evaluation)}">
+                  ${student.evaluation || 'غير محدد'}
+                </span>
+              </td>
+              <td class="fawj">${student.fawj || ''}</td>
+              <td>
+                <button class="btn btn-secondary edit-btn" style="padding: 8px 12px; font-size: 0.85em;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+                  </svg>
+                  تعديل
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+        
+        html += '</tbody></table></div>';
+        section.innerHTML = html;
+
+        // عند الضغط على زر تعديل
+        section.querySelectorAll('.edit-btn').forEach(btn => {
+          btn.onclick = function() {
+            const tr = btn.closest('tr');
+            if (tr.classList.contains('edit-row')) return;
+            
+            tr.classList.add('edit-row');
+            const id = tr.getAttribute('data-id');
+            const studentName = tr.querySelector('.studentName').textContent;
+            const parentName = tr.querySelector('.parentName').textContent;
+            const surahsCount = tr.querySelector('.surahsCount').textContent;
+            const attendanceDays = tr.querySelector('.attendanceDays').textContent;
+            const evaluation = tr.querySelector('.evaluation .evaluation-badge').textContent;
+            const fawj = tr.querySelector('.fawj').textContent;
+            
+            tr.innerHTML = `
+              <td><strong>${id}</strong></td>
+              <td><input type="text" class="form-input" value="${studentName}" style="width: 90%; padding: 8px 12px;"></td>
+              <td><input type="text" class="form-input" value="${parentName}" style="width: 90%; padding: 8px 12px;"></td>
+              <td><input type="number" class="form-input" value="${surahsCount}" style="width: 90%; padding: 8px 12px;"></td>
+              <td><input type="number" class="form-input" value="${attendanceDays}" style="width: 90%; padding: 8px 12px;"></td>
+              <td>
+                <select class="form-input" style="width: 90%; padding: 8px 12px;">
+                  <option value="ضعيف" ${evaluation === 'ضعيف' ? 'selected' : ''}>ضعيف</option>
+                  <option value="حسن" ${evaluation === 'حسن' ? 'selected' : ''}>حسن</option>
+                  <option value="جيد" ${evaluation === 'جيد' ? 'selected' : ''}>جيد</option>
+                  <option value="جيد جدا" ${evaluation === 'جيد جدا' ? 'selected' : ''}>جيد جدا</option>
+                </select>
+              </td>
+              <td>
+                <select class="form-input" style="width: 90%; padding: 8px 12px;">
+                  <option value="فوج الطالب أسامة" ${fawj === 'فوج الطالب أسامة' ? 'selected' : ''}>فوج الطالب أسامة</option>
+                  <option value="فوج الطالب حمودة" ${fawj === 'فوج الطالب حمودة' ? 'selected' : ''}>فوج الطالب حمودة</option>
+                  <option value="فوج الطالب محمد البشير" ${fawj === 'فوج الطالب محمد البشير' ? 'selected' : ''}>فوج الطالب محمد البشير</option>
+                  <option value="فوج الطالب محمد الحاج" ${fawj === 'فوج الطالب محمد الحاج' ? 'selected' : ''}>فوج الطالب محمد الحاج</option>
+                </select>
+              </td>
+              <td>
+                <button class="btn btn-success save-btn" style="padding: 8px 12px; font-size: 0.85em; margin-bottom: 5px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+                  </svg>
+                  حفظ
+                </button>
+                <button class="btn btn-danger cancel-btn" style="padding: 8px 12px; font-size: 0.85em;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+                  </svg>
+                  إلغاء
+                </button>
+              </td>
+            `;
+            
+            // زر الحفظ
+            tr.querySelector('.save-btn').onclick = async function() {
+              const newStudentName = tr.querySelector('td:nth-child(2) input').value.trim();
+              const newParentName = tr.querySelector('td:nth-child(3) input').value.trim();
+              const newSurahsCount = parseInt(tr.querySelector('td:nth-child(4) input').value.trim(), 10);
+              const newAttendanceDays = parseInt(tr.querySelector('td:nth-child(5) input').value.trim(), 10);
+              const newEvaluation = tr.querySelector('td:nth-child(6) select').value;
+              const newFawj = tr.querySelector('td:nth-child(7) select').value;
+              
+              try {
+                await db.collection('students').doc(id).update({
+                  studentName: newStudentName,
+                  parentName: newParentName,
+                  surahsCount: newSurahsCount,
+                  attendanceDays: newAttendanceDays,
+                  evaluation: newEvaluation,
+                  fawj: newFawj
+                });
+                
+                // إظهار رسالة نجاح
+                showMessage('تم تحديث بيانات الطالب بنجاح', 'success');
+                
+                // إعادة تحميل القائمة بعد الحفظ
+                setTimeout(() => {
+                  document.getElementById('editStudentBtn').click();
+                }, 1500);
+              } catch (error) {
+                showMessage('حدث خطأ أثناء تحديث البيانات', 'error');
+              }
+            };
+            
+            // زر الإلغاء
+            tr.querySelector('.cancel-btn').onclick = function() {
+              document.getElementById('editStudentBtn').click();
+            };
           };
-          // زر الإلغاء
-          tr.querySelector('.cancel-btn').onclick = function() {
-            document.getElementById('editStudentBtn').click();
-          };
-        };
-      });
+        });
+        
+      } catch (error) {
+        section.innerHTML = `
+          <div class="content-card">
+            <div class="section-title">خطأ في التحميل</div>
+            <p style="text-align: center; color: #e74c3c;">حدث خطأ أثناء تحميل بيانات الطلاب</p>
+          </div>
+        `;
+      }
     };
+
+    // دالة مساعدة لتحديد فئة التقييم
+    function getEvaluationClass(evaluation) {
+      switch(evaluation) {
+        case 'ضعيف': return 'evaluation-weak';
+        case 'حسن': return 'evaluation-good';
+        case 'جيد': return 'evaluation-very-good';
+        case 'جيد جدا': return 'evaluation-excellent';
+        default: return 'evaluation-unknown';
+      }
+    }
+
+    // دالة مساعدة لإظهار الرسائل
+    function showMessage(message, type) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${type}`;
+      messageDiv.textContent = message;
+      messageDiv.style.position = 'fixed';
+      messageDiv.style.top = '20px';
+      messageDiv.style.right = '20px';
+      messageDiv.style.zIndex = '10000';
+      messageDiv.style.minWidth = '300px';
+      messageDiv.style.animation = 'slideIn 0.3s ease-out';
+      
+      document.body.appendChild(messageDiv);
+      
+      setTimeout(() => {
+        messageDiv.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => {
+          if (messageDiv.parentNode) {
+            messageDiv.parentNode.removeChild(messageDiv);
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    // إضافة CSS للرسائل المتحركة
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideOut {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+      .evaluation-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.85em;
+        font-weight: 600;
+        color: #fff;
+      }
+      .evaluation-weak {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+      }
+      .evaluation-good {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+      }
+      .evaluation-very-good {
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+      }
+      .evaluation-excellent {
+        background: linear-gradient(135deg, #8e44ad, #9b59b6);
+      }
+      .evaluation-unknown {
+        background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+      }
+    `;
+    document.head.appendChild(style);
 
     // إضافة طالب جديد
     document.getElementById('addStudentForm').onsubmit = async function(e) {
@@ -534,28 +949,37 @@
       const evaluation = document.getElementById('evaluation').value;
       const fawj = document.getElementById('fawj').value;
       const resultDiv = document.getElementById('addStudentResult');
+      
       if (!id || !studentName || !parentName || !phone || !password) {
         resultDiv.textContent = 'يرجى تعبئة جميع الحقول المطلوبة';
-        resultDiv.className = 'result error';
+        resultDiv.className = 'message error';
         return;
       }
+      
       try {
         // تحقق إذا كان الطالب موجود مسبقاً
         const doc = await db.collection('students').doc(id).get();
         if (doc.exists) {
           resultDiv.textContent = 'رقم التلميذ مستخدم بالفعل';
-          resultDiv.className = 'result error';
+          resultDiv.className = 'message error';
           return;
         }
+        
         await db.collection('students').doc(id).set({
           studentName, parentName, phone, password, surahsCount, attendanceDays, evaluation, fawj
         });
+        
         resultDiv.textContent = 'تمت إضافة الطالب بنجاح';
-        resultDiv.className = 'result success';
+        resultDiv.className = 'message success';
         document.getElementById('addStudentForm').reset();
+        
+        // إظهار رسالة نجاح إضافية
+        showMessage('تمت إضافة الطالب بنجاح', 'success');
+        
       } catch (err) {
         resultDiv.textContent = 'حدث خطأ أثناء الإضافة';
-        resultDiv.className = 'result error';
+        resultDiv.className = 'message error';
+        showMessage('حدث خطأ أثناء إضافة الطالب', 'error');
       }
     };
   </script>

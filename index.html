@@ -69,28 +69,6 @@
       box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
     }
 
-    /* زر التخطي */
-    .skip-button {
-      position: absolute;
-      top: 30px;
-      right: 30px;
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 10px 20px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(5px);
-      font-family: 'IBM Plex Sans Arabic', Arial, sans-serif;
-    }
-
-    .skip-button:hover {
-      background: rgba(255, 255, 255, 0.25);
-      transform: translateY(-2px);
-    }
-
     /* إخفاء المحتوى الرئيسي أثناء الفيديو */
     .main-website {
       opacity: 0;
@@ -694,13 +672,6 @@
         width: 250px;
         bottom: 30px;
       }
-      
-      .skip-button {
-        top: 20px;
-        right: 20px;
-        padding: 8px 16px;
-        font-size: 12px;
-      }
     }
 
     /* للهواتف الصغيرة جداً */
@@ -781,13 +752,6 @@
       .loading-bar {
         width: 200px;
         bottom: 20px;
-      }
-      
-      .skip-button {
-        top: 15px;
-        right: 15px;
-        padding: 6px 12px;
-        font-size: 11px;
       }
     }
 
@@ -875,9 +839,6 @@
     <div class="loading-bar">
       <div class="loading-progress" id="loadingProgress"></div>
     </div>
-    
-    <!-- زر التخطي -->
-    <button class="skip-button" onclick="skipToMain()">تخطي</button>
   </div>
 
   <!-- المحتوى الرئيسي للموقع -->
