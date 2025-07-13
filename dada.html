@@ -6,247 +6,22 @@
   <link rel="icon" href="مدرسة-النــــور-_1_.ico" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: 'IBM Plex Sans Arabic', Arial, sans-serif;
-      background: #e0f7fa;
+      background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
       direction: rtl;
-    }
-    .header-bar {
-      width: 100%;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      padding: 35px 50px 0 50px;
-      box-sizing: border-box;
-      background: #fff;
-      border-bottom: 1px solid #009ca622;
-    }
-    .nav {
-      margin-top: 10px;
-    }
-    .nav ul {
-      list-style: none;
-      display: flex;
-      gap: 45px;
-      margin: 0;
-      padding: 0;
-    }
-    .nav ul li {
-      font-size: 1.1rem;
-      color: #009ca6;
-      font-weight: 500;
-      transition: color 0.2s;
-      cursor: pointer;
-    }
-    .nav ul li:hover {
-      color: #007f8c;
-    }
-    .logo-block {
-      text-align: right;
-    }
-    .logo-title {
-      font-size: 2rem;
-      color: #009ca6;
-      font-weight: 700;
-      margin-bottom: 0;
-      margin-top: 0;
-      letter-spacing: 0.5px;
-    }
-    .logo-desc {
-      color: #009ca6;
-      font-size: .95rem;
-      opacity: 0.8;
-      margin-top: 0;
-      font-weight: 400;
-    }
-    .logout-btn {
-      background: #fff;
-      color: #009ca6;
-      border: 2px solid #009ca6;
-      border-radius: 20px;
-      padding: 8px 28px;
-      font-size: 1.05rem;
-      font-family: inherit;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-      margin-top: 10px;
-    }
-    .logout-btn:hover {
-      background: #009ca6;
-      color: #fff;
-    }
-    .parent-dashboard {
-      max-width: 600px;
-      margin: 50px auto 0 auto;
-      background: #fff;
-      border-radius: 28px;
-      box-shadow: 0 8px 32px #009ca633;
-      padding: 40px 30px 30px 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .parent-avatar {
-      width: 110px;
-      height: 110px;
-      background: #009ca6;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 12px #009ca622;
-    }
-    .parent-name {
-      font-size: 1.5rem;
-      color: #009ca6;
-      font-weight: 700;
-      margin-bottom: 8px;
-      text-align: center;
-      letter-spacing: 0.2px;
-    }
-    .welcome-msg {
-      font-size: 1.1rem;
-      color: #007f8c;
-      margin-bottom: 25px;
-      text-align: center;
-      font-weight: 500;
-    }
-    .info-cards {
-      width: 100%;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-      justify-content: center;
-      margin-bottom: 10px;
-    }
-    .info-card {
-      background: #e0f7fa;
-      border-radius: 10px;
-      padding: 18px 20px;
-      min-width: 120px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      box-shadow: 0 1px 6px #009ca622;
-      transition: transform 0.35s cubic-bezier(.21,1.02,.73,1.01), box-shadow 0.35s cubic-bezier(.21,1.02,.73,1.01);
-      will-change: transform, box-shadow;
-      position: relative;
-      overflow: hidden;
-    }
-    .info-card:hover {
-      transform: scale(1.04) rotateY(8deg) rotateX(2deg) translateY(-6px);
-      box-shadow: 0 24px 48px rgba(0, 156, 166, 0.25), 0 4px 24px rgba(0,0,0,0.13);
-      z-index: 2;
-    }
-    .info-card::before {
-      content: '';
-      position: absolute;
-      top: -40%;
-      left: -40%;
-      width: 180%;
-      height: 180%;
-      background: radial-gradient(circle at 60% 40%, rgba(0,156,166,0.08) 0%, transparent 80%);
-      opacity: 0.7;
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-    .info-card:hover::before {
-      opacity: 1;
-    }
-    .info-label {
-      color: #009ca6;
-      font-size: 1.05rem;
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
-    .info-value {
-      color: #222;
-      font-size: 1.15rem;
-      font-weight: bold;
-    }
-    @media (max-width: 700px) {
-      .parent-dashboard { padding: 18px 5px 18px 5px; }
-      .info-cards { flex-direction: column; gap: 10px; }
-      .info-card { min-width: unset; width: 100%; }
-      .header-bar { flex-direction: column; padding: 20px 10px 0 10px; }
-    }
-    .not-available-modal {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
-      z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s;
-    }
-    .not-available-modal.show { opacity: 1; visibility: visible; }
-    .modal-content {
-      background: #fff; border-radius: 20px; padding: 30px; text-align: center;
-      max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      transform: scale(0.7); transition: transform 0.3s;
-    }
-    .not-available-modal.show .modal-content { transform: scale(1); }
-    .modal-icon { font-size: 2.5em; margin-bottom: 15px; }
-    .modal-title { color: #009ca6; font-size: 1.3em; font-weight: bold; margin-bottom: 10px; }
-    .modal-message { color: #666; font-size: 1em; margin-bottom: 20px; }
-    .modal-close-btn {
-      background: linear-gradient(135deg, #009ca6, #00b8c4); color: #fff; border: none;
-      padding: 12px 30px; border-radius: 25px; font-size: 1em; font-weight: 600; cursor: pointer;
-      transition: all 0.3s;
-    }
-    .modal-close-btn:hover { background: #007f8c; }
-  </style>
-</head>
-<body>
-  <div class="navbar">
-    <div class="logo-section">
-      <div class="logo-icon">ن</div>
-      <div class="logo-text">
-        <h2>مدرسة النور القرآنية</h2>
-        <small>الموقع الرسمي للمـــــدرسة النور القرانية</small>
-      </div>
-    </div>
-    <div class="nav-links">
-      <span>اعلانات</span>
-      <span>صفحتنا الرسمية</span>
-      <span>كشف النقاط</span>
-      <span>التتبع اليومي</span>
-      <button class="logout-btn" onclick="window.location.href='index.html'">تسجيل الخروج</button>
-    </div>
-  </div>
-  <div class="main-content">
-    <div class="parent-box horizontal-box">
-      <div class="parent-name">مرحبًا، (اسم ولي الأمر)</div>
-      <div class="welcome-msg">يسعدنا متابعتك لأداء ابنك في مدرسة النور القرآنية</div>
-      <div class="info-cards horizontal-cards">
-        <div class="info-card">
-          <div class="info-label">اسم الابن</div>
-          <div class="info-value">مُحَمَّد علي</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">عدد الاحزاب</div>
-          <div class="info-value">10</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">أيام الحضور هذا الشهر</div>
-          <div class="info-value">12</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">نسبة التقييم العام</div>
-          <div class="info-value">جيد جدا</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <style>
-    body {
-      background: #009ca6;
-      font-family: 'IBM Plex Sans Arabic', Arial, sans-serif;
       min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
+      transition: background 0.5s;
     }
+    
+    /* Navbar Styles - Keeping exactly as is */
     .navbar {
       display: flex;
       justify-content: space-between;
@@ -349,96 +124,172 @@
       width: 200%;
       height: 200%;
     }
+    
+    /* Main Content Styles */
     .main-content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      padding: 48px 0 32px 0;
       min-height: calc(100vh - 85px);
-      padding: 40px 10px;
+      background: none;
     }
-    .parent-box.horizontal-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(255,255,255,0.97);
-      border-radius: 20px;
-      box-shadow: 0 12px 40px #009ca633;
-      border: 1px solid #009ca622;
-      padding: 28px 18px 22px 18px;
-      min-width: 320px;
-      max-width: 900px;
-      width: 100%;
-      margin: 0 auto;
+    
+    .parent-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: none;
+      border-radius: 32px;
+      box-shadow: 0 8px 32px 0 rgba(0, 156, 166, 0.10), 0 1.5px 8px 0 rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: box-shadow 0.35s cubic-bezier(.21,1.02,.73,1.01), transform 0.35s cubic-bezier(.21,1.02,.73,1.01);
     }
-    .parent-box:hover {
-      box-shadow: 0 20px 60px #009ca655;
+    
+    .parent-card:hover {
+      box-shadow: 0 24px 64px 0 rgba(0, 156, 166, 0.18), 0 4px 24px 0 rgba(0,0,0,0.10);
+      transform: translateY(-6px) scale(1.015);
     }
+    
+    .parent-header {
+      background: linear-gradient(135deg, #009ca6 0%, #00b8c4 100%);
+      color: white;
+      padding: 36px 24px 28px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0 0 32px 32px;
+      box-shadow: 0 2px 16px 0 rgba(0,156,166,0.08);
+    }
+    
+    .parent-header::before {
+      content: '';
+      position: absolute;
+      top: -60%;
+      left: -60%;
+      width: 220%;
+      height: 220%;
+      background: radial-gradient(circle, rgba(255,255,255,0.13) 0%, transparent 80%);
+      animation: float 7s ease-in-out infinite;
+      z-index: 0;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-18px) rotate(180deg); }
+    }
+    
     .parent-avatar {
-      width: 70px;
-      height: 70px;
-      background: #009ca6;
+      width: 90px;
+      height: 90px;
+      background: rgba(255, 255, 255, 0.22);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 14px;
+      margin: 0 auto 18px auto;
+      border: 4px solid rgba(255, 255, 255, 0.22);
       box-shadow: 0 2px 12px #009ca622;
+      position: relative;
+      z-index: 1;
+      transition: box-shadow 0.3s;
     }
+    
+    .parent-card:hover .parent-avatar {
+      box-shadow: 0 8px 32px #009ca633;
+    }
+    
     .parent-name {
-      font-size: 1.08rem;
-      color: #009ca6;
+      font-size: 1.7rem;
       font-weight: 700;
-      margin-bottom: 6px;
-      text-align: center;
-      letter-spacing: 0.2px;
-    }
-    .welcome-msg {
-      font-size: 0.98rem;
-      color: #007f8c;
-      margin-bottom: 18px;
-      text-align: center;
-      font-weight: 500;
-    }
-    .info-cards.horizontal-cards {
-      display: flex;
-      flex-direction: row;
-      gap: 18px;
-      width: 100%;
-      justify-content: center;
-      margin-top: 18px;
-    }
-    .info-card {
-      background: #e0f7fa;
-      border-radius: 10px;
-      padding: 18px 20px;
-      min-width: 120px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      box-shadow: 0 1px 6px #009ca622;
-    }
-    .info-label {
-      color: #009ca6;
-      font-size: 0.98rem;
-      font-weight: 600;
       margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.07);
     }
-    .info-value {
+    
+    .welcome-msg {
+      font-size: 1.13rem;
+      opacity: 0.93;
+      position: relative;
+      z-index: 1;
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+    
+    .stats-section {
+      padding: 36px 32px 32px 32px;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e0f7fa 100%);
+      border: none;
+      border-radius: 22px;
+      padding: 32px 18px 28px 18px;
+      text-align: center;
+      transition: box-shadow 0.32s cubic-bezier(.21,1.02,.73,1.01), transform 0.32s cubic-bezier(.21,1.02,.73,1.01), background 0.32s;
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      box-shadow: 0 2px 12px 0 rgba(0,156,166,0.07);
+      cursor: pointer;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 156, 166, 0.1), transparent);
+      transition: left 0.5s;
+    }
+    
+    .stat-card:hover::before {
+      left: 100%;
+    }
+    
+    .stat-card:hover {
+      background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+      box-shadow: 0 8px 32px 0 rgba(0,156,166,0.13);
+      transform: translateY(-4px) scale(1.03);
+    }
+    
+    .stat-icon {
+      font-size: 2.7rem;
+      color: #009ca6;
+      margin-bottom: 18px;
+      display: block;
+      filter: drop-shadow(0 2px 8px #009ca622);
+      transition: color 0.3s;
+    }
+    
+    .stat-card:hover .stat-icon {
+      color: #00b8c4;
+    }
+    
+    .stat-label {
+      color: #009ca6;
+      font-size: 1.08rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      letter-spacing: 0.1px;
+      opacity: 0.93;
+    }
+    
+    .stat-value {
       color: #222;
-      font-size: 1.01rem;
-      font-weight: bold;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.1px;
+      opacity: 0.98;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.04);
     }
-    @media (max-width: 900px) {
-      .info-cards.horizontal-cards {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-      }
-      .parent-box.horizontal-box {
-        max-width: 98vw;
-        padding: 20px 15px 15px 15px;
-        margin: 20px 10px;
-      }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .stats-section { padding: 24px 8px 18px 8px; }
+      .row.g-4 { --bs-gutter-x: 1.2rem; --bs-gutter-y: 1.2rem; }
+    }
+    @media (max-width: 768px) {
       .navbar {
         padding: 15px 20px;
         flex-direction: column;
@@ -459,37 +310,27 @@
       .logo-text small {
         font-size: 0.75em;
       }
+      .main-content {
+        padding: 18px 0 10px 0;
+      }
+      .parent-header {
+        padding: 24px 10px 18px 10px;
+      }
+      .stats-section {
+        padding: 14px 2px 10px 2px;
+      }
+      .stat-card {
+        padding: 22px 8px 18px 8px;
+      }
+      .parent-card {
+        border-radius: 18px;
+      }
+      .parent-header {
+        border-radius: 0 0 18px 18px;
+      }
     }
     
-    @media (max-width: 600px) {
-      .parent-box.horizontal-box {
-        padding: 15px 10px 10px 10px;
-        margin: 10px 5px;
-        border-radius: 15px;
-      }
-      .parent-name {
-        font-size: 1rem;
-        margin-bottom: 4px;
-      }
-      .welcome-msg {
-        font-size: 0.9rem;
-        margin-bottom: 15px;
-        line-height: 1.4;
-      }
-      .info-cards.horizontal-cards {
-        gap: 8px;
-      }
-      .info-card {
-        padding: 12px 15px;
-        border-radius: 8px;
-      }
-      .info-label {
-        font-size: 0.9rem;
-        margin-bottom: 6px;
-      }
-      .info-value {
-        font-size: 0.95rem;
-      }
+    @media (max-width: 576px) {
       .navbar {
         padding: 10px 15px;
       }
@@ -516,58 +357,170 @@
       .logo-text small {
         font-size: 0.7em;
       }
-      .main-content {
-        padding: 20px 5px;
-        min-height: calc(100vh - 120px);
+      .parent-name {
+        font-size: 1.1rem;
+      }
+      .welcome-msg {
+        font-size: 0.95rem;
+      }
+      .stat-card {
+        border-radius: 10px;
+        padding: 14px 4px 10px 4px;
+      }
+      .stat-icon {
+        font-size: 1.7rem;
+      }
+      .stat-label {
+        font-size: 0.95rem;
+      }
+      .stat-value {
+        font-size: 1.05rem;
       }
     }
     
-    @media (max-width: 480px) {
-      .parent-box.horizontal-box {
-        padding: 12px 8px 8px 8px;
-        margin: 8px 3px;
-      }
-      .parent-name {
-        font-size: 0.95rem;
-      }
-      .welcome-msg {
-        font-size: 0.85rem;
-        margin-bottom: 12px;
-      }
-      .info-card {
-        padding: 10px 12px;
-      }
-      .info-label {
-        font-size: 0.85rem;
-      }
-      .info-value {
-        font-size: 0.9rem;
-      }
-      .navbar {
-        padding: 8px 10px;
-      }
-      .nav-links {
-        gap: 8px;
-      }
-      .nav-links span {
-        font-size: 0.8em;
-        padding: 4px 8px;
-      }
-      .logo-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 14px;
-      }
-      .logo-text h2 {
-        font-size: 1em;
-      }
-      .logo-text small {
-        font-size: 0.65em;
-      }
+    /* Modal Styles */
+    .not-available-modal {
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%;
+      background: rgba(0,0,0,0.5); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      z-index: 2000; 
+      opacity: 0; 
+      visibility: hidden; 
+      transition: all 0.3s;
+    }
+    .not-available-modal.show { 
+      opacity: 1; 
+      visibility: visible; 
+    }
+    .modal-content {
+      background: #fff; 
+      border-radius: 20px; 
+      padding: 30px; 
+      text-align: center;
+      max-width: 400px; 
+      width: 90%; 
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      transform: scale(0.7); 
+      transition: transform 0.3s;
+    }
+    .not-available-modal.show .modal-content { 
+      transform: scale(1); 
+    }
+    .modal-icon { 
+      font-size: 2.5em; 
+      margin-bottom: 15px; 
+    }
+    .modal-title { 
+      color: #009ca6; 
+      font-size: 1.3em; 
+      font-weight: bold; 
+      margin-bottom: 10px; 
+    }
+    .modal-message { 
+      color: #666; 
+      font-size: 1em; 
+      margin-bottom: 20px; 
+    }
+    .modal-close-btn {
+      background: linear-gradient(135deg, #009ca6, #00b8c4); 
+      color: #fff; 
+      border: none;
+      padding: 12px 30px; 
+      border-radius: 25px; 
+      font-size: 1em; 
+      font-weight: 600; 
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .modal-close-btn:hover { 
+      background: #007f8c; 
     }
   </style>
+</head>
+<body>
+  <!-- Navbar - Keeping exactly as is -->
+  <div class="navbar">
+    <div class="logo-section">
+      <div class="logo-icon">ن</div>
+      <div class="logo-text">
+        <h2>مدرسة النور القرآنية</h2>
+        <small>الموقع الرسمي للمـــــدرسة النور القرانية</small>
+      </div>
+    </div>
+    <div class="nav-links">
+      <span>اعلانات</span>
+      <span>صفحتنا الرسمية</span>
+      <span>كشف النقاط</span>
+      <span>التتبع اليومي</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">تسجيل الخروج</button>
+    </div>
+  </div>
+
+  <!-- Main Content with Bootstrap -->
+  <div class="main-content">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+          <div class="card parent-card">
+            <div class="parent-header">
+              <div class="parent-avatar">
+                <i class="bi bi-person-circle"></i>
+              </div>
+              <div class="parent-name">مرحبًا، (اسم ولي الأمر)</div>
+              <div class="welcome-msg">يسعدنا متابعتك لأداء ابنك في مدرسة النور القرآنية</div>
+            </div>
+            
+            <div class="stats-section">
+              <div class="row g-4">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                  <div class="card stat-card">
+                    <i class="bi bi-person-badge stat-icon"></i>
+                    <div class="stat-label">اسم الابن</div>
+                    <div class="stat-value">مُحَمَّد علي</div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                  <div class="card stat-card">
+                    <i class="bi bi-book-half stat-icon"></i>
+                    <div class="stat-label">عدد السور المحفوظة</div>
+                    <div class="stat-value">10</div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                  <div class="card stat-card">
+                    <i class="bi bi-calendar-check stat-icon"></i>
+                    <div class="stat-label">أيام الحضور هذا الشهر</div>
+                    <div class="stat-value">12</div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                  <div class="card stat-card">
+                    <i class="bi bi-star-fill stat-icon"></i>
+                    <div class="stat-label">نسبة التقييم العام</div>
+                    <div class="stat-value">جيد جدا</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  
   <script>
     // إعدادات Firebase - نفس التي وضعتها في admin.html
     const firebaseConfig = {
@@ -600,13 +553,13 @@
       // اسم ولي الأمر
       document.querySelector('.parent-name').textContent = `مرحبًا، ${data.parentName || ''}`;
       // اسم الابن
-      document.querySelector('.info-card:nth-child(1) .info-value').textContent = data.studentName || '';
+      document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = data.studentName || '';
       // عدد السور المحفوظة
-      document.querySelector('.info-card:nth-child(2) .info-value').textContent = data.surahsCount || '0';
+      document.querySelector('.stat-card:nth-child(2) .stat-value').textContent = data.surahsCount || '0';
       // أيام الحضور
-      document.querySelector('.info-card:nth-child(3) .info-value').textContent = data.attendanceDays || '0';
+      document.querySelector('.stat-card:nth-child(3) .stat-value').textContent = data.attendanceDays || '0';
       // نسبة التقييم العام
-      document.querySelector('.info-card:nth-child(4) .info-value').textContent = data.evaluation || '';
+      document.querySelector('.stat-card:nth-child(4) .stat-value').textContent = data.evaluation || '';
     }
 
     fillStudentData();
@@ -643,18 +596,39 @@
       }
     });
 
-    document.querySelectorAll('.info-card').forEach(card => {
-      card.addEventListener('mousemove', function(e) {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width/2;
-        const y = e.clientY - rect.top - rect.height/2;
-        card.style.transform = `scale(1.04) rotateY(${x/18}deg) rotateX(${-y/18}deg)`;
+    async function fetchNotifications() {
+      const studentId = getStudentIdFromUrl();
+      if (!studentId) return;
+
+      const notificationsRef = db.collection('students').doc(studentId).collection('notifications').orderBy('timestamp', 'desc');
+      const snapshot = await notificationsRef.get();
+
+      const notifications = [];
+      snapshot.forEach(doc => {
+        notifications.push(doc.data());
       });
-      card.addEventListener('mouseleave', function() {
-        card.style.transform = '';
+
+      // عرض الإشعارات في واجهة المستخدم
+      showNotifications(notifications);
+    }
+
+    function showNotifications(notifications) {
+      const notifList = document.getElementById('notifList');
+      notifList.innerHTML = '';
+      notifications.forEach(n => {
+        notifList.innerHTML += `
+          <div class="alert alert-info mb-2">
+            <strong>${n.title}</strong><br>
+            <small>${n.body}</small>
+          </div>
+        `;
       });
-    });
+    }
+
+    // نادِ الدالة عند تحميل الصفحة
+    fetchNotifications();
   </script>
+  
   <!-- نافذة رسالة ليس متوفر الآن -->
   <div id="notAvailableModal" class="not-available-modal">
     <div class="modal-content">
@@ -664,6 +638,7 @@
       <button class="modal-close-btn" onclick="closeNotAvailableModal()">إغلاق</button>
     </div>
   </div>
+  <div class="container mt-3" id="notifList"></div>
 </body>
 </html>
 
