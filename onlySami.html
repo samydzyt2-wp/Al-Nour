@@ -654,6 +654,7 @@
 
     <!-- جدول الطلاب -->
     <div class="students-table-container">
+      <div id="studentsCount" style="color:#009ca6;font-weight:600;font-size:1.1em;margin-bottom:12px;text-align:right;"></div>
       <table class="students-table" id="studentsTable">
         <thead>
           <tr>
@@ -820,6 +821,7 @@
     // عرض جدول الطلاب
     function renderStudentsTable(students) {
       const tbody = document.getElementById('studentsTableBody');
+      document.getElementById('studentsCount').textContent = `عدد الطلبة المسجلين: ${students.length}`;
       
       if (students.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" class="no-data">لا يوجد طلاب</td></tr>';

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>إحصائيات الطلاب - مدرسة النور القرآنية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="مدرسة-النــــور-_1_.ico" type="image/x-icon">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { 
+      background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+      font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; 
+      margin: 0; 
+      padding: 0; 
+      min-height: 100vh;
+    }
+    .navbar { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 20px 50px; 
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #009ca622; 
+      box-shadow: 0 4px 20px rgba(0, 156, 166, 0.1);
+    }
+    .logo-section { display: flex; align-items: center; gap: 15px; }
+    .logo-icon { 
+      width: 45px; 
+      height: 45px; 
+      background: linear-gradient(135deg, #009ca6, #00b8c4);
+      color: #fff; 
+      border-radius: 12px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 20px; 
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0, 156, 166, 0.3);
+    }
+    .logo-text h2 { color: #009ca6; font-size: 1.4em; font-weight: 600; margin-bottom: 2px; }
+    .logo-text small { color: #009ca6; font-size: 0.8em; font-weight: 300; }
+    .main-content { padding: 40px 20px; max-width: 1400px; margin: 0 auto; }
+    
+    .header-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .stat-title { 
+      color: #009ca6; 
+      font-size: 2.5em; 
+      font-weight: 700; 
+      margin-bottom: 15px;
+      text-shadow: 0 2px 4px rgba(0, 156, 166, 0.1);
+    }
+    .stat-desc { 
+      color: #333; 
+      font-size: 1.1em; 
+      margin-bottom: 30px;
+      opacity: 0.8;
+    }
+    
+    .controls-section {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(0, 156, 166, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .filter-controls {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    
+    .filter-select {
+      padding: 12px 20px;
+      border: 2px solid #e0f7fa;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      background: #f8f9fa;
+      color: #009ca6;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 200px;
+    }
+    
+    .filter-select:focus {
+      outline: none;
+      border-color: #009ca6;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(0, 156, 166, 0.1);
+    }
+    
+    .print-btn {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+    }
+    
+    .print-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+    }
+    
+    .students-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+    
+    .student-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 8px 32px rgba(0, 156, 166, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .student-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0, 156, 166, 0.25);
+    }
+    
+    .student-card.expanded {
+      grid-column: span 2;
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .student-info h3 {
+      color: #009ca6;
+      font-size: 1.3em;
+      font-weight: 600;
+      margin: 0 0 5px 0;
+    }
+    
+    .student-info p {
+      color: #666;
+      font-size: 0.9em;
+      margin: 0;
+    }
+    
+    .expand-icon {
+      width: 30px;
+      height: 30px;
+      background: #009ca6;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+    
+    .student-card.expanded .expand-icon {
+      transform: rotate(180deg);
+    }
+    
+    .card-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 15px;
+      background: rgba(0, 156, 166, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(0, 156, 166, 0.1);
+    }
+    
+    .stat-value {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #009ca6;
+      margin-bottom: 5px;
+    }
+    
+    .stat-label {
+      font-size: 0.85em;
+      color: #666;
+    }
+    
+    .card-details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .student-card.expanded .card-details {
+      max-height: 500px;
+    }
+    
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(0, 156, 166, 0.1);
+    }
+    
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      background: rgba(0, 156, 166, 0.03);
+      border-radius: 8px;
+    }
+    
+    .detail-label {
+      font-weight: 600;
+      color: #009ca6;
+      font-size: 0.9em;
+    }
+    
+    .detail-value {
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .evaluation-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      color: #fff;
+    }
+    
+    .evaluation-excellent { background: linear-gradient(135deg, #8e44ad, #9b59b6); }
+    .evaluation-very-good { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+    .evaluation-good { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    .evaluation-weak { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    
+    @media print {
+      .navbar, .controls-section, .expand-icon { display: none !important; }
+      .student-card { break-inside: avoid; page-break-inside: avoid; }
+      .student-card.expanded { grid-column: span 1 !important; }
+      .card-details { max-height: none !important; }
+    }
+    
+    @media (max-width: 768px) {
+      .students-grid { grid-template-columns: 1fr; }
+      .student-card.expanded { grid-column: span 1; }
+      .filter-controls { flex-direction: column; }
+      .filter-select { min-width: 100%; }
+      .stat-title { font-size: 2em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo-section">
+      <div class="logo-icon">ن</div>
+      <div class="logo-text">
+        <h2>مدرسة النور القرآنية</h2>
+        <small>إحصائيات الطلاب حسب المعلم</small>
+      </div>
+    </div>
+  </div>
+  
+  <div class="main-content">
+    <div class="header-section">
+      <div class="stat-title">إحصائيات عامة لكل تلميذ</div>
+      <div class="stat-desc">يعرض هذا الجدول ملخصًا شاملاً لكل تلميذ حسب المعلم مع إمكانية التوسيع لعرض التفاصيل الكاملة</div>
+    </div>
+    
+    <div class="controls-section">
+      <div class="filter-controls">
+        <select id="fawjFilter" class="filter-select">
+          <option value="">جميع الفوج</option>
+        </select>
+        
+        <!-- زر الطباعة السنوي تمت إزالته -->
+      </div>
+    </div>
+    
+    <div class="students-grid" id="studentsGrid">
+      <!-- سيتم ملء البيانات هنا -->
+    </div>
+  </div>
+  
+  <script>
+    // إعدادات Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIxf27yWX291hqbHb7fIcJYOOJCWRTfs8",
+      authDomain: "al-nour-1c02e.firebaseapp.com",
+      projectId: "al-nour-1c02e",
+      storageBucket: "al-nour-1c02e.firebasestorage.app",
+      messagingSenderId: "966464739304",
+      appId: "1:966464739304:web:85013dbe5584ece1deb65d",
+      measurementId: "G-5833RVR669"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let allStudents = [];
+    let allAttendance = [];
+
+    // جلب بيانات الطلاب
+    async function loadStudentsStats() {
+      try {
+        const studentsSnap = await db.collection('students').get();
+        allStudents = studentsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        const attendanceSnap = await db.collection('attendance').get();
+        allAttendance = attendanceSnap.docs.map(doc => doc.data());
+        
+        // ملء قائمة الفوج
+        const fawjs = [...new Set(allStudents.map(s => s.fawj).filter(Boolean))];
+        const fawjFilter = document.getElementById('fawjFilter');
+        fawjs.forEach(fawj => {
+          const option = document.createElement('option');
+          option.value = fawj;
+          option.textContent = fawj;
+          fawjFilter.appendChild(option);
+        });
+        
+        renderStudentsCards(allStudents);
+        setupFilters();
+      } catch (error) {
+        console.error('خطأ في جلب البيانات:', error);
+      }
+    }
+
+    // عرض الطلاب على شكل بطاقات
+    function renderStudentsCards(students) {
+      const grid = document.getElementById('studentsGrid');
+      grid.innerHTML = '';
+      
+      students.forEach(student => {
+        const attendance = allAttendance.filter(a => a.studentId === student.id);
+        const attendanceDays = attendance.length;
+        const surahsCount = student.surahsCount || 0;
+        
+        // حساب التقدير العام
+        let evaluation = 'غير محدد';
+        let evaluationClass = '';
+        if (attendance.length > 0) {
+          const evals = attendance.map(a => a.evaluation).filter(Boolean);
+          if (evals.length > 0) {
+            const freq = {};
+            evals.forEach(e => freq[e] = (freq[e]||0)+1);
+            evaluation = Object.keys(freq).reduce((a,b)=>freq[a]>freq[b]?a:b);
+            
+            switch(evaluation) {
+              case 'جيد جدا': evaluationClass = 'evaluation-excellent'; break;
+              case 'جيد': evaluationClass = 'evaluation-very-good'; break;
+              case 'حسن': evaluationClass = 'evaluation-good'; break;
+              case 'ضعيف': evaluationClass = 'evaluation-weak'; break;
+            }
+          }
+        }
+        
+        // آخر حضور
+        let lastAttendance = 'لم يسجل بعد';
+        if (attendance.length > 0) {
+          lastAttendance = attendance.map(a => a.date).sort().reverse()[0];
+        }
+        
+        const card = document.createElement('div');
+        card.className = 'student-card';
+        card.innerHTML = `
+          <div class="card-header">
+            <div class="student-info">
+              <h3>${student.studentName || 'غير محدد'}</h3>
+              <p>${student.fawj || 'غير محدد'}</p>
+            </div>
+          </div>
+          
+          <div class="card-stats">
+            <div class="stat-item">
+              <div class="stat-value">${surahsCount}</div>
+              <div class="stat-label">السور المحفوظة</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${attendanceDays}</div>
+              <div class="stat-label">أيام الحضور</div>
+            </div>
+          </div>
+          
+          <div class="card-details">
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="detail-label">رقم التلميذ:</span>
+                <span class="detail-value">${student.id}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">اسم ولي الأمر:</span>
+                <span class="detail-value">${student.parentName || 'غير محدد'}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">التقدير العام:</span>
+                <span class="detail-value">
+                  <span class="evaluation-badge ${evaluationClass}">${evaluation}</span>
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">آخر حضور:</span>
+                <span class="detail-value">${lastAttendance}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // إضافة مستمع النقر للتوسيع
+        card.addEventListener('click', () => {
+          card.classList.toggle('expanded');
+        });
+        
+        grid.appendChild(card);
+      });
+    }
+
+    // إعداد الفلاتر
+    function setupFilters() {
+      const fawjFilter = document.getElementById('fawjFilter');
+      fawjFilter.addEventListener('change', () => {
+        const selectedFawj = fawjFilter.value;
+        const filteredStudents = selectedFawj 
+          ? allStudents.filter(s => s.fawj === selectedFawj)
+          : allStudents;
+        renderStudentsCards(filteredStudents);
+      });
+    }
+
+    // طباعة التقرير
+    function printReport() {
+      window.print();
+    }
+
+    // تحميل البيانات عند تحميل الصفحة
+    loadStudentsStats();
+  </script>
+</body>
+</html> 

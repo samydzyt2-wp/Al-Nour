@@ -988,7 +988,12 @@
           const ayatCount = surahIdx >= 0 ? surahs[surahIdx].ayat : 1;
           ayahSel.innerHTML = Array.from({length: ayatCount}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
         }
-        fromSurahSel.addEventListener('change', ()=>updateAyat(fromSurahSel, fromAyahSel));
+        fromSurahSel.addEventListener('change', ()=>{
+          updateAyat(fromSurahSel, fromAyahSel);
+          // مزامنة إلى السورة تلقائياً مع إمكانية التعديل
+          toSurahSel.value = fromSurahSel.value;
+          updateAyat(toSurahSel, toAyahSel);
+        });
         toSurahSel.addEventListener('change', ()=>updateAyat(toSurahSel, toAyahSel));
         // تهيئة افتراضية
         updateAyat(fromSurahSel, fromAyahSel);
@@ -1190,6 +1195,11 @@
       // تحديث الآيات عند تغيير السور
       bulkFromSurah.addEventListener('change', () => updateBulkAyat('from'));
       bulkToSurah.addEventListener('change', () => updateBulkAyat('to'));
+      if (bulkFromSurah && bulkToSurah) {
+        bulkFromSurah.addEventListener('change', function() {
+          bulkToSurah.value = bulkFromSurah.value;
+        });
+      }
       
       // حفظ البيانات الجماعية
       saveBulkBtn.addEventListener('click', saveBulkData);
