@@ -651,6 +651,13 @@
       background: #fff;
       box-shadow: 0 0 0 3px #009ca615;
     }
+    .save-btn.saved-today {
+      background: #bdbdbd !important;
+      color: #fff !important;
+      cursor: not-allowed !important;
+      border: none;
+      opacity: 0.85;
+    }
   </style>
 </head>
 <body>
@@ -908,21 +915,33 @@
               <option value="لم يُعرض" class="absent">لم يُعرض</option>
             </select>
           </td>
-          <td>
+          <td class="surah-fields">
             <label class="table-label">من السورة</label>
             <select class="from-surah">${surahs.map((s,i)=>`<option value="${s.name}">${s.name}</option>`).join('')}</select>
           </td>
-          <td>
+          <td class="surah-fields">
             <label class="table-label">من الآية</label>
             <input type="number" class="from-ayah" placeholder="رقم الآية">
           </td>
-          <td>
+          <td class="surah-fields">
             <label class="table-label">إلى السورة</label>
             <select class="to-surah">${surahs.map((s,i)=>`<option value="${s.name}">${s.name}</option>`).join('')}</select>
           </td>
-          <td>
+          <td class="surah-fields">
             <label class="table-label">إلى الآية</label>
             <input type="number" class="to-ayah" placeholder="رقم الآية">
+          </td>
+          <td class="hizb-fields" style="display:none">
+            <label class="table-label">من الحزب</label>
+            <select class="from-hizb">${Array.from({length:60},(_,i)=>`<option value='${i+1}'>${i+1}</option>`).join('')}</select>
+          </td>
+          <td class="hizb-fields" style="display:none">
+            <label class="table-label">إلى الحزب</label>
+            <select class="to-hizb">${Array.from({length:60},(_,i)=>`<option value='${i+1}'>${i+1}</option>`).join('')}</select>
+          </td>
+          <td class="hizb-fields" style="display:none">
+            <label class="table-label">اسم الحزب</label>
+            <input type="text" class="hizb-name" placeholder="اسم الحزب">
           </td>
           <td>
             <label class="table-label">التقييم</label>
@@ -954,26 +973,35 @@
         const statusSelect = tr.querySelector('.status-select');
         const evalSelect = tr.querySelector('.eval-select');
         const noteInput = tr.querySelector('.note-input');
+        // الحقول الجديدة للحزب
+        const fromHizbSel = tr.querySelector('.from-hizb');
+        const toHizbSel = tr.querySelector('.to-hizb');
+        const hizbNameInput = tr.querySelector('.hizb-name');
         
         // دالة لإخفاء/إظهار الحقول حسب الحالة
         function toggleFieldsByStatus() {
           const isAbsent = statusSelect.value === 'غائب' || statusSelect.value === 'لم يُعرض';
-          const fieldsToDisable = [
-            fromSurahSel, fromAyahSel, toSurahSel, toAyahSel,
-            tr.querySelector('.eval-select'),
-            tr.querySelector('.note-input')
-          ];
-          
+          const isReview = statusSelect.value === 'مراجعة';
+          const surahFields = tr.querySelectorAll('.surah-fields');
+          const hizbFields = tr.querySelectorAll('.hizb-fields');
+          // تعطيل الكل إذا غائب
           if (isAbsent) {
             tr.classList.add('tr-absent');
-            fieldsToDisable.forEach(field => {
+            [...surahFields, ...hizbFields, evalSelect, noteInput].forEach(field => {
                 if (field) field.disabled = true;
             });
           } else {
             tr.classList.remove('tr-absent');
-            fieldsToDisable.forEach(field => {
-                if (field) field.disabled = false;
-            });
+            evalSelect.disabled = false;
+            noteInput.disabled = false;
+            // إذا مراجعة
+            if (isReview) {
+              surahFields.forEach(f => f.style.display = 'none');
+              hizbFields.forEach(f => { f.style.display = ''; f.disabled = false; });
+            } else {
+              surahFields.forEach(f => { f.style.display = ''; f.disabled = false; });
+              hizbFields.forEach(f => { f.style.display = 'none'; f.disabled = true; });
+            }
           }
           // Change class for status color
           statusSelect.className = 'status-select ' + (isAbsent ? 'absent' : 'present');
@@ -1009,6 +1037,7 @@
           const studentId = tr.getAttribute('data-id');
           const status = tr.querySelector('.status-select').value;
           const isAbsent = status === 'غائب' || status === 'لم يُعرض';
+          const isReview = status === 'مراجعة';
           
           // البيانات الأساسية
           const data = {
@@ -1017,20 +1046,27 @@
             status
           };
           
-          // إضافة البيانات الإضافية فقط إذا كان حاضر
           if (!isAbsent) {
-            data.fromSurah = tr.querySelector('.from-surah').value;
-            data.fromAyah = parseInt(tr.querySelector('.from-ayah').value);
-            data.toSurah = tr.querySelector('.to-surah').value;
-            data.toAyah = parseInt(tr.querySelector('.to-ayah').value);
+            if (isReview) {
+              data.fromHizb = parseInt(tr.querySelector('.from-hizb').value);
+              data.toHizb = parseInt(tr.querySelector('.to-hizb').value);
+              data.hizbName = tr.querySelector('.hizb-name').value;
+            } else {
+              data.fromSurah = tr.querySelector('.from-surah').value;
+              data.fromAyah = parseInt(tr.querySelector('.from-ayah').value);
+              data.toSurah = tr.querySelector('.to-surah').value;
+              data.toAyah = parseInt(tr.querySelector('.to-ayah').value);
+            }
             data.evaluation = tr.querySelector('.eval-select').value;
             data.note = tr.querySelector('.note-input').value;
           }
           
           try {
             await db.collection('attendance').add(data);
-            btn.textContent = 'تم الحفظ';
+            btn.textContent = 'تم الحفظ اليوم';
             btn.style.background = '#009c4a';
+            btn.disabled = true;
+            btn.classList.add('saved-today');
             setTimeout(()=>{ 
               btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 8px;"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> حفظ`; 
               btn.style.background = ''; 

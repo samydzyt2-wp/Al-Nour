@@ -282,6 +282,95 @@
       .filter-select { min-width: 100%; }
       .stat-title { font-size: 2em; }
     }
+    .attendance-table-container {
+      margin-top: 18px;
+    }
+    .attendance-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      font-size: 0.97em;
+      margin-bottom: 0;
+    }
+    .attendance-table th, .attendance-table td {
+      border: 1px solid #e0e0e0;
+      padding: 6px 8px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .attendance-table th {
+      background: #f7f7f7;
+      color: #009ca6;
+      font-weight: 600;
+      font-size: 1em;
+    }
+    .attendance-table tr {
+      transition: background 0.2s;
+    }
+    .attendance-table tr.editing {
+      background: #eafafc;
+    }
+    .attendance-table td {
+      font-size: 0.97em;
+      min-width: 60px;
+      max-width: 160px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .attendance-table input,
+    .attendance-table select {
+      width: 95%;
+      padding: 3px 6px;
+      font-size: 0.97em;
+      border-radius: 4px;
+      border: 1px solid #bdbdbd;
+      background: #f9f9f9;
+      transition: border 0.2s;
+    }
+    .attendance-table input:focus,
+    .attendance-table select:focus {
+      border: 1.5px solid #009ca6;
+      background: #fff;
+      outline: none;
+    }
+    .attendance-table .edit-attendance-btn,
+    .attendance-table .save-attendance-btn {
+      padding: 3px 10px;
+      font-size: 0.93em;
+      border-radius: 4px;
+      min-width: 55px;
+      margin: 0;
+      box-shadow: none;
+    }
+    .attendance-table .edit-attendance-btn {
+      background: #f7f7f7;
+      color: #009ca6;
+      border: 1px solid #bdbdbd;
+    }
+    .attendance-table .edit-attendance-btn:hover {
+      background: #e0f7fa;
+      color: #007c8a;
+      border-color: #009ca6;
+    }
+    .attendance-table .save-attendance-btn {
+      background: #009c4a;
+      color: #fff;
+      border: none;
+    }
+    .attendance-table .save-attendance-btn:hover {
+      background: #007c3a;
+    }
+    @media (max-width: 600px) {
+      .attendance-table th, .attendance-table td {
+        font-size: 0.92em;
+        padding: 4px 2px;
+      }
+      .attendance-table input,
+      .attendance-table select {
+        font-size: 0.92em;
+        padding: 2px 3px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -436,14 +525,116 @@
                 <span class="detail-value">${lastAttendance}</span>
               </div>
             </div>
+            <div class="attendance-table-container">
+              <table class="attendance-table">
+                <thead>
+                  <tr>
+                    <th>التاريخ</th>
+                    <th>الحالة</th>
+                    <th>من السورة</th>
+                    <th>من الآية</th>
+                    <th>إلى السورة</th>
+                    <th>إلى الآية</th>
+                    <th>التقييم</th>
+                    <th>ملاحظة</th>
+                    <th>تعديل</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${attendance.map((a, i) => `
+                    <tr data-idx="${i}" data-date="${a.date}">
+                      <td>${a.date || '-'}</td>
+                      <td><span class="att-status">${a.status || '-'}</span></td>
+                      <td><span class="att-from-surah">${a.fromSurah || '-'}</span></td>
+                      <td><span class="att-from-ayah">${a.fromAyah || '-'}</span></td>
+                      <td><span class="att-to-surah">${a.toSurah || '-'}</span></td>
+                      <td><span class="att-to-ayah">${a.toAyah || '-'}</span></td>
+                      <td><span class="att-eval">${a.evaluation || '-'}</span></td>
+                      <td><span class="att-note">${a.note || '-'}</span></td>
+                      <td><button class="edit-attendance-btn btn btn-sm btn-outline-primary">تعديل</button></td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
           </div>
         `;
-        
         // إضافة مستمع النقر للتوسيع
-        card.addEventListener('click', () => {
+        card.addEventListener('click', (e) => {
+          // منع التوسيع عند الضغط على زر تعديل أو حفظ
+          if (e.target.classList.contains('edit-attendance-btn') || e.target.classList.contains('save-attendance-btn')) return;
           card.classList.toggle('expanded');
         });
-        
+        // إضافة منطق التعديل والحفظ لسجلات الحضور
+        setTimeout(() => {
+          card.querySelectorAll('.edit-attendance-btn').forEach((btn, idx) => {
+            btn.addEventListener('click', function() {
+              const tr = btn.closest('tr');
+              if (tr.classList.contains('editing')) return;
+              tr.classList.add('editing');
+              // حفظ القيم القديمة
+              const old = {
+                status: tr.querySelector('.att-status').textContent,
+                fromSurah: tr.querySelector('.att-from-surah').textContent,
+                fromAyah: tr.querySelector('.att-from-ayah').textContent,
+                toSurah: tr.querySelector('.att-to-surah').textContent,
+                toAyah: tr.querySelector('.att-to-ayah').textContent,
+                evaluation: tr.querySelector('.att-eval').textContent,
+                note: tr.querySelector('.att-note').textContent
+              };
+              // بناء عناصر قابلة للتعديل
+              tr.innerHTML = `
+                <td>${tr.getAttribute('data-date')}</td>
+                <td><select class="form-select form-select-sm status-input">
+                  <option value="حاضر" ${old.status==='حاضر'?'selected':''}>حاضر</option>
+                  <option value="غائب" ${old.status==='غائب'?'selected':''}>غائب</option>
+                  <option value="مراجعة" ${old.status==='مراجعة'?'selected':''}>مراجعة</option>
+                  <option value="لم يُعرض" ${old.status==='لم يُعرض'?'selected':''}>لم يُعرض</option>
+                </select></td>
+                <td><input type="text" class="form-control form-control-sm from-surah-input" value="${old.fromSurah}"></td>
+                <td><input type="number" class="form-control form-control-sm from-ayah-input" value="${old.fromAyah}"></td>
+                <td><input type="text" class="form-control form-control-sm to-surah-input" value="${old.toSurah}"></td>
+                <td><input type="number" class="form-control form-control-sm to-ayah-input" value="${old.toAyah}"></td>
+                <td><select class="form-select form-select-sm eval-input">
+                  <option value="ضعيف" ${old.evaluation==='ضعيف'?'selected':''}>ضعيف</option>
+                  <option value="حسن" ${old.evaluation==='حسن'?'selected':''}>حسن</option>
+                  <option value="جيد" ${old.evaluation==='جيد'?'selected':''}>جيد</option>
+                  <option value="جيد جدا" ${old.evaluation==='جيد جدا'?'selected':''}>جيد جدا</option>
+                </select></td>
+                <td><input type="text" class="form-control form-control-sm note-input" value="${old.note}"></td>
+                <td><button class="save-attendance-btn btn btn-sm btn-success">حفظ</button></td>
+              `;
+              // زر الحفظ
+              tr.querySelector('.save-attendance-btn').addEventListener('click', async function() {
+                const newData = {
+                  status: tr.querySelector('.status-input').value,
+                  fromSurah: tr.querySelector('.from-surah-input').value,
+                  fromAyah: parseInt(tr.querySelector('.from-ayah-input').value),
+                  toSurah: tr.querySelector('.to-surah-input').value,
+                  toAyah: parseInt(tr.querySelector('.to-ayah-input').value),
+                  evaluation: tr.querySelector('.eval-input').value,
+                  note: tr.querySelector('.note-input').value
+                };
+                try {
+                  // تحديث السجل في Firebase
+                  const attDate = tr.getAttribute('data-date');
+                  const attSnap = await db.collection('attendance')
+                    .where('studentId', '==', student.id)
+                    .where('date', '==', attDate)
+                    .get();
+                  if (!attSnap.empty) {
+                    const docId = attSnap.docs[0].id;
+                    await db.collection('attendance').doc(docId).update(newData);
+                    // إعادة تحميل البيانات
+                    await loadStudentsStats();
+                  }
+                } catch (err) {
+                  alert('حدث خطأ أثناء الحفظ!');
+                }
+              });
+            });
+          });
+        }, 100);
         grid.appendChild(card);
       });
     }
